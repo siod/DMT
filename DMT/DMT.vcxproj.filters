@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{809c4bbc-301f-4373-885c-19d0b8c49993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sys">
+      <UniqueIdentifier>{967c0e1f-abbe-4cae-a5f3-7ff35982f080}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{65a43756-da6d-4e55-93b1-84f8b2dd8766}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sys\win_main.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="Sys\logging.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sys\logging.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
