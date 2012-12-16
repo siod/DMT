@@ -6,15 +6,21 @@
 #include <iostream>
 
 
+/*
 #ifdef Log
 #undef Log
 #undef LogLine
 #endif
+*/
 
 class Logging {
 	public:
+		enum LOG_LEVEL {LOG_DEBUG,
+						LOG_INFO,
+						LOG_ERROR };
+				
 
-		Logging(bool enabled, bool toConsole = false, bool toFile = false): m_enabled(enabled), m_toConsole(toConsole), m_toFile(toFile)
+		Logging(bool enabled,LOG_LEVEL logLevel, bool toConsole = false, bool toFile = false): m_enabled(enabled), m_toConsole(toConsole), m_toFile(toFile),m_logLevel(logLevel)
 		{
 			if (toConsole)
 				setupConsoleLog();
@@ -25,10 +31,10 @@ class Logging {
 
 
 		// Singleton setup
-		static void CreateLog(bool enabled, bool toConsole = false, bool toFile = false) {
+		static void init(bool enabled, LOG_LEVEL level, bool toConsole = false, bool toFile = false) {
 			if (m_instance)
 				return;
-			m_instance = new Logging(enabled,toConsole,toFile);
+			m_instance = new Logging(enabled,level,toConsole,toFile);
 		}
 
 		static void DestroyLog() {
@@ -41,26 +47,30 @@ class Logging {
 		bool setupFileLog();
 		bool setupConsoleLog( int numLines = 200);
 
-		void log(std::wstring& input) {
-			if (!m_enabled)
+		void log(std::wstring& input,LOG_LEVEL level) {
+			if (!m_enabled || level > m_logLevel)
 				return;
 			std::wcout << input;
 		}
 
-		void logLine(std::wstring& input) {
-			log(input);
-			log("\n");
+		void logLine(std::wstring& input, LOG_LEVEL level) {
+			if (!m_enabled || level > m_logLevel)
+				return;
+			log(input,level);
+			log("\n",level);
 		}
 
-		void log(const char* input) {
-			if (!m_enabled)
+		void log(const char* input,LOG_LEVEL level) {
+			if (!m_enabled || level > m_logLevel)
 				return;
 			std::cout << input;
 		}
 
-		void logLine(const char* input) {
-			log(input);
-			log("\n");
+		void logLine(const char* input,LOG_LEVEL level) {
+			if (!m_enabled || level > m_logLevel)
+				return;
+			log(input,level);
+			log("\n",level);
 		}
 
 
@@ -71,39 +81,37 @@ class Logging {
 		}
 
 
-		static void Log(std::wstring& input) {
+		static void Log(std::wstring& input,LOG_LEVEL level) {
 			if (m_instance)
-				m_instance->log(input);
+				m_instance->log(input,level);
 		}
 
-		static void LogLine(std::wstring& input) {
+		static void LogLine(std::wstring& input,LOG_LEVEL level) {
 			if (m_instance)
-				m_instance->logLine(input);
+				m_instance->logLine(input,level);
 		}
 
-		static void Log(const char* input) {
+		static void Log(const char* input,LOG_LEVEL level) {
 			if (m_instance)
-				m_instance->log(input);
+				m_instance->log(input,level);
 		}
 
 
-		static void LogLine(const char* input) {
+		static void LogLine(const char* input,LOG_LEVEL level) {
 			if (m_instance)
-				m_instance->logLine(input);
+				m_instance->logLine(input,level);
 		}
 
 	private:
 		const bool m_enabled;
 		const bool m_toConsole;
 		const bool m_toFile;
+		const LOG_LEVEL m_logLevel;
 		static Logging* m_instance;
 
 
 
 };
-
-#define Log Logging::Log
-#define LogLine Logging::LogLine
 
 
 #endif

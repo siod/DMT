@@ -1,0 +1,20 @@
+#ifndef _SYS_PUBLIC_H
+#define _SYS_PUBLIC_H
+#include <windows.h>
+#include <D3D11.h>
+
+typedef struct {
+	HWND hWnd;
+	HINSTANCE hInstance;
+	ID3D11Device* pDevice;
+	ID3D11DeviceContext* pContext;
+	IDXGISwapChain*  pSwapChain;
+	bool windowRegistered;
+
+} win_info_t;
+
+// quits the game
+void Sys_Quit();
+void Sys_Init();
+
+#endif

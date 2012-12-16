@@ -10,6 +10,9 @@
     <Filter Include="Input">
       <UniqueIdentifier>{65a43756-da6d-4e55-93b1-84f8b2dd8766}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{5b5f39e7-9037-4463-ad75-537fa47d5782}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sys\win_main.cpp">
@@ -18,9 +21,42 @@
     <ClCompile Include="Sys\logging.cpp">
       <Filter>Sys</Filter>
     </ClCompile>
+    <ClCompile Include="framework\Common.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\sys_graphics.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\win_wndproc.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sys\logging.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="input\input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\win_input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Sys\sys_public.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\Common.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\win_local.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sys_graphics.h">
       <Filter>Sys</Filter>
     </ClInclude>
   </ItemGroup>
