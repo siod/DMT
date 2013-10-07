@@ -3,7 +3,7 @@
 #include <iostream>
 #include <D3D11.h>
 
-#include "logging.h"
+#include "..\..\..\c++\SiLib\SiLog\logging.h"
 #include "..\framework\Common.h"
 #include "sys_public.h"
 
@@ -47,15 +47,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	//if (strstr(cmdLine,"-log") != NULL) {
-		//Logging::CreateLog(true,Logging::LOG_DEBUG,true,false);
-	//}
 	common->init(0,0,cmdLine);
 	Log("log Test\n",Logging::LOG_DEBUG);
 	Log("DMTv1.0a\n",Logging::LOG_DEBUG);
-	//std::cout << "DMTv1.0a\n";
-	Logging::Get();
-	Logging::DestroyLog();
+	Logging::destroy();
+	std::cin.get();
 	return 0;
 
 }

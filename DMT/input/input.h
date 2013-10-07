@@ -2,7 +2,7 @@
 
 #if defined _WIN32
 #include "win_input.h"
-	typedef Base_input Win_input;
+	typedef Win_input Base_input;
 #else
 
 #endif

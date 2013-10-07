@@ -13,12 +13,12 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{5b5f39e7-9037-4463-ad75-537fa47d5782}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Loaders">
+      <UniqueIdentifier>{cff5f771-f4f8-4228-ad5d-2d9bbb6d27c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sys\win_main.cpp">
-      <Filter>Sys</Filter>
-    </ClCompile>
-    <ClCompile Include="Sys\logging.cpp">
       <Filter>Sys</Filter>
     </ClCompile>
     <ClCompile Include="framework\Common.cpp">
@@ -33,11 +33,17 @@
     <ClCompile Include="sys\win_wndproc.cpp">
       <Filter>Sys</Filter>
     </ClCompile>
+    <ClCompile Include="framework\resource_manager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\loaders\loader_OBJ.cpp">
+      <Filter>Framework\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\model.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sys\logging.h">
-      <Filter>Sys</Filter>
-    </ClInclude>
     <ClInclude Include="input\input.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -58,6 +64,39 @@
     </ClInclude>
     <ClInclude Include="sys\sys_graphics.h">
       <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\TextureManager.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\Material.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\typedefs.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\resource_manager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vertexBuff.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\model.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\entity.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\resource_loader.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\loaders\loader_OBJ.h">
+      <Filter>Framework\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\loaders\loader.h">
+      <Filter>Framework\Loaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,9 +1,13 @@
 
 
 #include <D3D11.h>
+#include <D3DX11tex.h>
 #include <DxErr.h>
 #include "..\Sys\sys_public.h"
 #include "..\Sys\sys_graphics.h"
+#include "..\framework\typedefs.h"
+#include "..\framework\math.h"
+#include "..\renderer\vertexBuff.h"
 extern win_info_t win32;
 #define DMT_WINDOW_CLASS_NAME L"DMT"
 #define DMT_NAME L"DMT v0.1a"
@@ -92,7 +96,7 @@ void Sys_InitGraphicsDriver(driver_params_t params) {
 	scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 	// No multisampling.
-	scd.SampleDesc.Count   = 1;
+	scd.SampleDesc.Count   = params.numSamples;
 	scd.SampleDesc.Quality = 0;
 
 	scd.BufferUsage  = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -121,4 +125,83 @@ void Sys_InitGraphics(driver_params_t params) {
 	Sys_InitWindowClass();
 	Sys_CreateWindow(params);
 	Sys_InitGraphicsDriver(params);
+}
+
+void Sys_ShutdownGraphics() {
+
+
+}
+
+/*
+bool Sys_CreateTextureBuffer() {
+	return true;
+
+}
+*/
+
+
+DXGI_FORMAT Sys_ConvertBufferFormat(int engineFormat) {
+	//returns a converted engine format to the OS format
+	//TODO
+	return DXGI_FORMAT_R32G32B32A32_FLOAT;
+}
+
+
+Texture Sys_LoadTextureFromFile(const SiString& filename,int format) {
+		
+	Texture newTexture;
+	D3DX11_IMAGE_LOAD_INFO loadInfo;
+	ZeroMemory( &loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO) );
+	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+	loadInfo.Format = Sys_ConvertBufferFormat(format);
+	HR(D3DX11CreateShaderResourceViewFromFile(win32.pDevice, convertToWideString(filename).c_str(),
+											&loadInfo, NULL, &newTexture.res, NULL));
+	return newTexture;
+
+}
+void Sys_ReleaseTexture(Texture& texture) {
+	if (texture.res == NULL) {
+		return;
+	}
+	texture.res->Release();
+	texture.res = NULL;
+}
+Texture Sys_LoadTexture() {
+	//TODO
+	Texture tmp;
+	tmp.res = NULL;
+	return tmp;
+}
+
+D3D11_USAGE sys_buffer_usage_lt[] = {
+	D3D11_USAGE_DEFAULT,
+	D3D11_USAGE_IMMUTABLE,
+	D3D11_USAGE_DYNAMIC,
+	D3D11_USAGE_STAGING };
+
+D3D11_BIND_FLAG sys_buffer_bind_lt[] = {
+	D3D11_BIND_VERTEX_BUFFER,
+	D3D11_BIND_INDEX_BUFFER,
+	D3D11_BIND_CONSTANT_BUFFER,
+	D3D11_BIND_SHADER_RESOURCE,
+	D3D11_BIND_STREAM_OUTPUT,
+	D3D11_BIND_RENDER_TARGET,
+	D3D11_BIND_DEPTH_STENCIL 
+};
+
+void Sys_ConvertBufferFormat(D3D11_BUFFER_DESC &sysbuffer, const RenderBuffer &engineBuffer) {
+	sysbuffer.Usage = sys_buffer_usage_lt[engineBuffer.usage];
+    sysbuffer.BindFlags = sys_buffer_bind_lt[engineBuffer.type];
+    sysbuffer.ByteWidth = engineBuffer.size;
+	sysbuffer.CPUAccessFlags = (engineBuffer.cpu_writable) ? D3D11_CPU_ACCESS_WRITE : D3D11_CPU_ACCESS_READ;
+	sysbuffer.MiscFlags = 0;
+}
+
+bool Sys_CreateBuffer(RenderBuffer* buffer,void* data) {
+	D3D11_BUFFER_DESC bd;
+	Sys_ConvertBufferFormat(bd,*buffer);
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = data;
+	HR(win32.pDevice->CreateBuffer(&bd,&initData,&buffer->data.res));
+	return true;
 }
