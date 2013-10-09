@@ -98,5 +98,8 @@
     <ClInclude Include="Framework\loaders\loader.h">
       <Filter>Framework\Loaders</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\renderView.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

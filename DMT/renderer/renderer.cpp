@@ -11,3 +11,13 @@ void Renderer::init() {
 	params.fullscreen = false;
 	Sys_InitGraphics(params);
 }
+
+bool Renderer::allocateView(renderView& view) {
+	return false;
+
+}
+void Renderer::frame() {
+
+
+
+}

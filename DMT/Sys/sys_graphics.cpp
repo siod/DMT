@@ -8,6 +8,10 @@
 #include "..\framework\typedefs.h"
 #include "..\framework\math.h"
 #include "..\renderer\vertexBuff.h"
+#include "..\renderer\renderView.h"
+
+#include "..\..\..\c++\SiLib\SiLog\logging.h"
+
 extern win_info_t win32;
 #define DMT_WINDOW_CLASS_NAME L"DMT"
 #define DMT_NAME L"DMT v0.1a"
@@ -57,7 +61,7 @@ void Sys_InitWindowClass() {
 
 	if( !RegisterClass(&wc) )
 	{
-		MessageBox(0, L"RegisterClass FAILED", 0, 0);
+		Log("RegisterClass FAILED",Logging::LOG_ERROR);
 		PostQuitMessage(0);
 	}
 	win32.windowRegistered = true;
@@ -75,7 +79,7 @@ void Sys_CreateWindow(driver_params_t params) {
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, win32.hInstance, NULL); 
 	if( !win32.hWnd )
 	{
-		MessageBox(0, L"CreateWindow FAILED", 0, 0);
+		Log("CreateWindow FAILED",Logging::LOG_ERROR);
 		PostQuitMessage(0);
 	}
 
@@ -132,6 +136,10 @@ void Sys_ShutdownGraphics() {
 
 }
 
+void Sys_SwapAndDisplay() {
+	win32.pSwapChain->Present(0,0);
+}
+
 /*
 bool Sys_CreateTextureBuffer() {
 	return true;
@@ -173,13 +181,14 @@ Texture Sys_LoadTexture() {
 	return tmp;
 }
 
-D3D11_USAGE sys_buffer_usage_lt[] = {
+const D3D11_USAGE sys_buffer_usage_lt[] = {
 	D3D11_USAGE_DEFAULT,
 	D3D11_USAGE_IMMUTABLE,
 	D3D11_USAGE_DYNAMIC,
-	D3D11_USAGE_STAGING };
+	D3D11_USAGE_STAGING 
+};
 
-D3D11_BIND_FLAG sys_buffer_bind_lt[] = {
+const D3D11_BIND_FLAG sys_buffer_bind_lt[] = {
 	D3D11_BIND_VERTEX_BUFFER,
 	D3D11_BIND_INDEX_BUFFER,
 	D3D11_BIND_CONSTANT_BUFFER,
@@ -195,6 +204,13 @@ void Sys_ConvertBufferFormat(D3D11_BUFFER_DESC &sysbuffer, const RenderBuffer &e
     sysbuffer.ByteWidth = engineBuffer.size;
 	sysbuffer.CPUAccessFlags = (engineBuffer.cpu_writable) ? D3D11_CPU_ACCESS_WRITE : D3D11_CPU_ACCESS_READ;
 	sysbuffer.MiscFlags = 0;
+}
+
+void Sys_SetandClearView(const renderView* view) {
+	win32.pContext->RSSetViewports(1,&view->res.viewPort);
+	win32.pContext->OMSetRenderTargets(1,&view->res.target,view->res.stencil);
+	win32.pContext->ClearRenderTargetView(view->res.target,view->clearColor.data);
+	win32.pContext->ClearDepthStencilView(view->res.stencil, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
 }
 
 bool Sys_CreateBuffer(RenderBuffer* buffer,void* data) {

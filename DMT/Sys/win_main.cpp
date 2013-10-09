@@ -10,21 +10,29 @@
 using std::wstring;
 extern Common* common;
 
+#ifndef Log
 #define Log Logging::Log
 #define LogLine Logging::LogLine
+#endif
 
 win_info_t win32;
 extern Common* common;
 void Sys_PumpEvents() {
-	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
-		if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
-			// Quit msg received
-			common->Quit();
-		}
+	while (common->Running()) {
+		MSG msg;
+		while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
+			if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
+				// Quit msg received
+				common->Quit();
+				Log("Shutting down\n",Logging::LOG_DEBUG);
+				return;
+			}
 
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		common->mainLoop();
+
 	}
 
 }
@@ -50,6 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	common->init(0,0,cmdLine);
 	Log("log Test\n",Logging::LOG_DEBUG);
 	Log("DMTv1.0a\n",Logging::LOG_DEBUG);
+	Sys_PumpEvents();
 	Logging::destroy();
 	std::cin.get();
 	return 0;

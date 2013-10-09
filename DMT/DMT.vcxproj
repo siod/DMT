@@ -34,6 +34,7 @@
     <ClInclude Include="renderer\Material.h" />
     <ClInclude Include="renderer\model.h" />
     <ClInclude Include="renderer\renderer.h" />
+    <ClInclude Include="renderer\renderView.h" />
     <ClInclude Include="renderer\TextureManager.h" />
     <ClInclude Include="renderer\vertexBuff.h" />
     <ClInclude Include="sys\sys_graphics.h" />

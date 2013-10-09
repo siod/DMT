@@ -11,7 +11,8 @@ Common com;
 Common * common = &com;
 
 void Common::Quit() {
-	Sys_Quit();
+	Log("Shutting down\n",Logging::LOG_DEBUG);
+	m_running = false;
 }
 
 bool Common::init(int argc, const char** argv,const char* cmdLine) {
@@ -23,17 +24,17 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 	m_resources->init();
 	m_resources->loadEntity("..\resources\teapot.obj");
 
-
+	m_running=true;
 	return true;
 }
 
 void Common::mainLoop() {
+	/*
 	float ftime(0.0f);
-	while (true) {
-
-
-
+	while (m_running) {
+		m_renderer->frame();
 	}
+	*/
 }
 
 
