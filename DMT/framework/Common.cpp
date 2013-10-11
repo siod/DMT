@@ -18,10 +18,10 @@ void Common::Quit() {
 bool Common::init(int argc, const char** argv,const char* cmdLine) {
 	Logging::init(Logging::LOG_DEBUG,true,true,"dmt.log");
 	Sys_Init();
-	m_renderer = new Renderer();
-	m_renderer->init();
 	m_resources = new Resource_manager();
 	m_resources->init();
+	m_renderer = new Renderer();
+	m_renderer->init();
 	m_resources->loadEntity("..\resources\teapot.obj");
 
 	m_running=true;
@@ -29,12 +29,8 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 }
 
 void Common::mainLoop() {
-	/*
 	float ftime(0.0f);
-	while (m_running) {
-		m_renderer->frame();
-	}
-	*/
+	m_renderer->frame();
 }
 
 

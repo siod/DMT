@@ -1,11 +1,13 @@
 
+#ifndef _TEXTURE_MANAGER_
+#define _TEXTURE_MANAGER_
 #include <unordered_map>
+#include "Texture.h"
 #include "..\Sys\sys_graphics.h"
 class TextureManager {
 	typedef struct {
 		Texture texture;
 		int count;
-		int format;
 		bool loaded;
 	} texture_info_t;
 
@@ -17,11 +19,22 @@ class TextureManager {
 
 		~TextureManager() {
 			for (textureCache::iterator cur = textures.begin();cur != textures.end();++cur) {
-				Sys_ReleaseTexture(cur->second.texture);
+				Sys_ReleaseTexture(cur->second.texture.texture);
 			}
 		}
 
-		Texture* loadTexture(const SiString& name,int format) {
+		void allocateTexture(const SiString& name,Texture &newTexture) {
+			if (textures.find(name) != textures.end()) {
+				return;
+			}
+			Sys_CreateTexture(newTexture);
+			texture_info_t newTex_info;
+			newTex_info.count =1;
+			newTex_info.loaded = true;
+			textures[name] = newTex_info;
+		}
+
+		Texture* loadTextureFromFile(const SiString& name,int format) {
 			if (textures.find(name) != textures.end()) {
 				//exists
 				++textures[name].count;
@@ -31,12 +44,12 @@ class TextureManager {
 			} else {
 				// doesn't exist
 				texture_info_t newTexture;
-				newTexture.format = format;
+				newTexture.texture.format = format;
 				newTexture.count = 1;
 				textures[name] = newTexture;
 			}
 			textures[name].loaded = true;
-			textures[name].texture = Sys_LoadTextureFromFile(name,textures[name].format);
+			Sys_LoadTextureFromFile(textures[name].texture,name);
 			return &textures[name].texture;
 
 		}
@@ -48,10 +61,12 @@ class TextureManager {
 				return;
 
 			textures[name].loaded = false;
-			Sys_ReleaseTexture(textures[name].texture);
+			Sys_ReleaseTexture(textures[name].texture.texture);
 		}
 
 	private:
 		textureCache textures;
 
 };
+
+#endif

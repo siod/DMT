@@ -101,5 +101,8 @@
     <ClInclude Include="renderer\renderView.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\Texture.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

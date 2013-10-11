@@ -14,7 +14,7 @@ public:
 
 
 private:
-	bool allocateView(renderView& unallocView);
+	void allocateView(renderView& unallocView);
 
 	std::vector<renderView> m_views;
 	std::vector<renderModel> m_queue;

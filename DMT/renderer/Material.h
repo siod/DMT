@@ -7,7 +7,7 @@ class Material {
 
 private:
 	Texture* textures[4];
-	Shader* shaders[4];
+	//Shader* shaders[4];
 
 };
 #endif

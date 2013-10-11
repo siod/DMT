@@ -9,6 +9,7 @@
 #include "..\framework\math.h"
 #include "..\renderer\vertexBuff.h"
 #include "..\renderer\renderView.h"
+#include "..\renderer\Texture.h"
 
 #include "..\..\..\c++\SiLib\SiLog\logging.h"
 
@@ -108,7 +109,7 @@ void Sys_InitGraphicsDriver(driver_params_t params) {
 	scd.OutputWindow = win32.hWnd;
 	scd.Windowed     = true;
 	scd.SwapEffect   = DXGI_SWAP_EFFECT_DISCARD;
-	scd.Flags        = 0;
+	scd.Flags        = (params.deviceFlags) ? D3D11_CREATE_DEVICE_DEBUG: 0;
 	D3D_FEATURE_LEVEL featureLvl;
 	HR(D3D11CreateDeviceAndSwapChain(
 		0,//Default device
@@ -147,40 +148,6 @@ bool Sys_CreateTextureBuffer() {
 }
 */
 
-
-DXGI_FORMAT Sys_ConvertBufferFormat(int engineFormat) {
-	//returns a converted engine format to the OS format
-	//TODO
-	return DXGI_FORMAT_R32G32B32A32_FLOAT;
-}
-
-
-Texture Sys_LoadTextureFromFile(const SiString& filename,int format) {
-		
-	Texture newTexture;
-	D3DX11_IMAGE_LOAD_INFO loadInfo;
-	ZeroMemory( &loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO) );
-	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
-	loadInfo.Format = Sys_ConvertBufferFormat(format);
-	HR(D3DX11CreateShaderResourceViewFromFile(win32.pDevice, convertToWideString(filename).c_str(),
-											&loadInfo, NULL, &newTexture.res, NULL));
-	return newTexture;
-
-}
-void Sys_ReleaseTexture(Texture& texture) {
-	if (texture.res == NULL) {
-		return;
-	}
-	texture.res->Release();
-	texture.res = NULL;
-}
-Texture Sys_LoadTexture() {
-	//TODO
-	Texture tmp;
-	tmp.res = NULL;
-	return tmp;
-}
-
 const D3D11_USAGE sys_buffer_usage_lt[] = {
 	D3D11_USAGE_DEFAULT,
 	D3D11_USAGE_IMMUTABLE,
@@ -206,11 +173,100 @@ void Sys_ConvertBufferFormat(D3D11_BUFFER_DESC &sysbuffer, const RenderBuffer &e
 	sysbuffer.MiscFlags = 0;
 }
 
-void Sys_SetandClearView(const renderView* view) {
-	win32.pContext->RSSetViewports(1,&view->res.viewPort);
-	win32.pContext->OMSetRenderTargets(1,&view->res.target,view->res.stencil);
-	win32.pContext->ClearRenderTargetView(view->res.target,view->clearColor.data);
-	win32.pContext->ClearDepthStencilView(view->res.stencil, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
+DXGI_FORMAT Sys_ConvertTextureFormat(const int engineFormat) {
+	//returns a converted engine format to the OS format
+	//TODO
+	switch (engineFormat) {
+		case 0:
+			return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case 1:
+			return DXGI_FORMAT_D24_UNORM_S8_UINT;
+		case 2:
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
+}
+
+
+void Sys_ConvertTextureFormat(D3D11_TEXTURE2D_DESC &desc,const Texture &engineDesc) {
+	desc.Height = engineDesc.height;
+	desc.Width = engineDesc.width;
+	desc.Format = Sys_ConvertTextureFormat(engineDesc.format);
+	desc.MipLevels = engineDesc.mipLevels;
+	desc.Usage = sys_buffer_usage_lt[engineDesc.usage];
+	desc.BindFlags = sys_buffer_bind_lt[engineDesc.bindFlags];
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	desc.ArraySize = 1;
+	desc.SampleDesc.Count =1;
+	desc.SampleDesc.Quality = 0;
+}
+
+void Sys_CreateTexture(Texture &tex) {
+	D3D11_TEXTURE2D_DESC desc;
+	Sys_ConvertTextureFormat(desc,tex);
+	HR(win32.pDevice->CreateTexture2D(&desc,NULL,&tex.texture.res));
+}
+
+void Sys_LoadTextureFromFile(Texture &texture,const SiString& filename) {
+		
+	/*
+	Sys_texture_t newTexture;
+	D3DX11_IMAGE_LOAD_INFO loadInfo;
+	ZeroMemory( &loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO) );
+	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+	loadInfo.Format = Sys_ConvertTextureFormat(format);
+	HR(D3DX11CreateShaderResourceViewFromFile(win32.pDevice, convertToWideString(filename).c_str(),
+											&loadInfo, NULL, &newTexture.res, NULL));
+											*/
+
+}
+
+void Sys_ReleaseTexture(Sys_texture_t& texture) {
+	if (texture.res == NULL) {
+		return;
+	}
+	texture.res->Release();
+	texture.res = NULL;
+}
+
+Sys_texture_t Sys_LoadTexture() {
+	//TODO
+	Sys_texture_t tmp;
+	tmp.res = NULL;
+	return tmp;
+}
+
+void Sys_createShaderResource(renderView &view) {
+
+
+
+}
+
+void Sys_CreateScreenBuffers(renderView &view) {
+	ID3D11Texture2D* backBuffer;
+	HR(win32.pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
+	HR(win32.pDevice->CreateRenderTargetView(backBuffer,0,&view.res.target));
+	HR(win32.pDevice->CreateDepthStencilView(view.stencilTexture->texture.res,NULL,&view.res.stencil));
+
+}
+
+
+void Sys_convertViewPort(const viewport &view, D3D11_VIEWPORT &dxView) {
+	dxView.TopLeftX = view.topLeftX;
+	dxView.TopLeftY = view.topLeftY;
+	dxView.Height = view.height;
+	dxView.Width = view.width;
+	dxView.MinDepth = view.minDepth;
+	dxView.MaxDepth = view.maxDepth;
+}
+
+void Sys_SetandClearView(const renderView &view) {
+	D3D11_VIEWPORT viewPort;
+	Sys_convertViewPort(view.view,viewPort);
+	win32.pContext->RSSetViewports(1,&viewPort);
+	win32.pContext->OMSetRenderTargets(1,&view.res.target,view.res.stencil);
+	win32.pContext->ClearRenderTargetView(view.res.target,view.clearColor.data);
+	win32.pContext->ClearDepthStencilView(view.res.stencil, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
 }
 
 bool Sys_CreateBuffer(RenderBuffer* buffer,void* data) {

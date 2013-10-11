@@ -15,7 +15,6 @@ public:
 		return m_running;
 	}
 
-private:
 
 	Renderer* m_renderer;
 	Resource_manager* m_resources;

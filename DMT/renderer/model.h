@@ -1,8 +1,8 @@
 
 #include <vector>
 #include "..\framework\math.h"
-#include "..\Sys\sys_graphics.h"
 #include "Material.h"
+extern struct RenderBuffer;
 class renderModel {
 public:
 	enum MODEL_STATUS {

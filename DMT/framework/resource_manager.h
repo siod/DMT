@@ -10,7 +10,6 @@ public:
 	void init();
 	void loadEntity(const char* name);
 
-private:
 	TextureManager textures;
 
 };
