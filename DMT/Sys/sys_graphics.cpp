@@ -10,6 +10,7 @@
 #include "..\renderer\vertexBuff.h"
 #include "..\renderer\renderView.h"
 #include "..\renderer\Texture.h"
+#include "..\renderer\Shader.h"
 
 #include "..\..\..\c++\SiLib\SiLog\logging.h"
 
@@ -275,5 +276,93 @@ bool Sys_CreateBuffer(RenderBuffer* buffer,void* data) {
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data;
 	HR(win32.pDevice->CreateBuffer(&bd,&initData,&buffer->data.res));
+	return true;
+}
+
+void Sys_Log_Shader_Errors(ID3D10Blob *errors,const SiString& shaderName) {
+	Log(shaderName + "failed to Compile",Logging::LOG_ERROR);
+	char* errorMsg = static_cast<char*>(errors->GetBufferPointer());
+	size_t bufSize = errors->GetBufferSize();
+	Log(errorMsg,Logging::LOG_ERROR);
+	errors->Release();
+}
+
+void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const size_t dSize,
+							   const unsigned int numBuffers, const unsigned int whichBuffer) {
+	for (unsigned int bufNum(0);bufNum < numBuffers;++bufNum) {
+		D3D11_MAPPED_SUBRESOURCE res;
+		HRESULT result = win32.pContext->Map(constBuffer.res,0,D3D11_MAP_WRITE_DISCARD,0,&res);
+		if (FAILED(result)) {
+			return;
+		}
+		memcpy(res.pData,data[bufNum],dSize);
+		win32.pContext->Unmap(constBuffer.res,0);
+		win32.pContext->VSSetConstantBuffers(bufNum,1,&constBuffer.res);
+	}
+}
+
+ID3D10Blob* Sys_Shader_Compile(const SiString& filename,const SiString& shaderFuncName,const SiString& type) {
+	ID3D10Blob* shader(0);
+	ID3D10Blob* errors(0);
+	unsigned int flags(0);
+	//http://msdn.microsoft.com/en-us/library/windows/desktop/ff476261%28v=vs.85%29.aspx
+	HRESULT result = D3DX11CompileFromFileA(filename.c_str(),NULL,NULL,shaderFuncName.c_str(),type.c_str(),flags,0,NULL,&shader,&errors,NULL);
+	if (FAILED(result)) {
+		if (errors)
+			Sys_Log_Shader_Errors(errors,filename);
+		else
+			Log("Unable to find shader file: " + filename,Logging::LOG_ERROR);
+		return NULL;
+	}
+	return shader;
+}
+
+const SiString sys_shader_typ_lt[] = {
+	"ps_5_0",
+	"vs_5_0"
+};
+const SiString& Sys_Shader_convert_type(Shader::S_Type type) {
+	return sys_shader_typ_lt[type];
+}
+
+bool Sys_Shader_Create(Shader *shader) {
+	//Compile Shader
+	ID3D10Blob* byteCode = Sys_Shader_Compile(shader->m_FileName,
+		shader->m_FuncName,Sys_Shader_convert_type(shader->type));
+	if (shader == NULL)
+		return false;
+	//Create Shader
+	HRESULT result;
+	switch (shader->type) {
+
+		case Shader::S_VERTEX:
+			result = win32.pDevice->CreateVertexShader(byteCode->GetBufferPointer(),byteCode->GetBufferSize(),NULL,&shader->vs.shader);
+			break;
+		case Shader::S_PIXEL:
+			result = win32.pDevice->CreatePixelShader(byteCode->GetBufferPointer(),byteCode->GetBufferSize(),NULL,&shader->ps.shader);
+			break;
+		default:
+			Log("Uknown shader type",Logging::LOG_ERROR);
+			break;
+	}
+	if (FAILED(result)) {
+		Log("Unable to create shader " + shader->m_FileName,Logging::LOG_ERROR);
+		return false;
+	}
+	if (shader->type == Shader::S_PIXEL)
+		return true;
+
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BINORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,5,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
+	if (FAILED(inputResult)) {
+		Log("Unable to create vertex input layout",Logging::LOG_ERROR);
+			return false;
+	}
 	return true;
 }

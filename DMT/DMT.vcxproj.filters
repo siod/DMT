@@ -42,6 +42,9 @@
     <ClCompile Include="renderer\model.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\material.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input\input.h">
@@ -102,6 +105,9 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\Texture.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\Shader.h">
       <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,7 +22,7 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 	m_resources->init();
 	m_renderer = new Renderer();
 	m_renderer->init();
-	m_resources->loadEntity("..\resources\teapot.obj");
+	m_resources->loadEntity("..\\resources\\teapot.obj");
 
 	m_running=true;
 	return true;

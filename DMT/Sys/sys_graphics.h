@@ -44,10 +44,24 @@ typedef struct win_vertBuff_s {
 	ID3D11InputLayout*	mVertexLayout;
 } Sys_vertBuff_t;
 
+typedef struct win_Buff_s {
+	ID3D11Buffer* res;
+} Sys_Buff_t;
+
+
 struct ID3D11EffectTechnique;
 typedef struct {
-	ID3D11EffectTechnique* res;
-} Sys_shader_t;
+	ID3D11VertexShader* shader;
+	ID3D11InputLayout*	mVertexLayout;
+} Sys_VS_t;
+
+typedef struct {
+	ID3D11PixelShader* shader;
+} Sys_PS_t;
+
+typedef struct {
+	ID3D10Blob* blob;
+} Sys_Blob_t;
 
 struct renderView;
 void Sys_InitWindow();
@@ -67,4 +81,6 @@ bool Sys_CreateBuffer(RenderBuffer* buffer,void* data);
 void Sys_CreateScreenBuffers(renderView &view);
 
 void Sys_ReleaseTexture(Sys_texture_t& texture);
+extern struct Shader;
+bool Sys_Shader_Create(Shader *shader);
 #endif

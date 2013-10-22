@@ -16,7 +16,10 @@ public:
 	};
 	renderModel():points(),indices(),material(NULL),status(INACTIVE) {}
 
-	void load(std::vector<vert3>&,std::vector<unsigned int>&);
+	bool loadMesh(std::vector<vert3>&,std::vector<unsigned int>&);
+	bool loadMaterial(const SiString& name,const SiString* textureNames,const unsigned int numTextures,
+		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
+		const SiString& vertexShader_filename,const SiString& vertexShader_funcname);
 
 private:
 	struct RenderBuffer* points;

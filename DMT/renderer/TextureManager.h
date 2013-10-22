@@ -34,7 +34,7 @@ class TextureManager {
 			textures[name] = newTex_info;
 		}
 
-		Texture* loadTextureFromFile(const SiString& name,int format) {
+		Texture* loadTextureFromFile(const SiString& name,const int format) {
 			if (textures.find(name) != textures.end()) {
 				//exists
 				++textures[name].count;

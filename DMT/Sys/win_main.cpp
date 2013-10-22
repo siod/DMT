@@ -56,8 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 	common->init(0,0,cmdLine);
-	Log("log Test\n",Logging::LOG_DEBUG);
-	Log("DMTv1.0a\n",Logging::LOG_DEBUG);
+	LogLine("DMTv1.0a",Logging::LOG_DEBUG);
 	Sys_PumpEvents();
 	Logging::destroy();
 	std::cin.get();

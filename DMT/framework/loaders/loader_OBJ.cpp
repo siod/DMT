@@ -110,10 +110,10 @@ void loader_OBJ::readMtl(const std::string& filename) {
 
 
 
-bool loader_OBJ::loadfile(std::vector<vert3> &verts, std::vector<unsigned int> &indices) {
+bool loader_OBJ::loadfile(std::vector<vert3> &verts, std::vector<vert3> &norms, std::vector<unsigned int> &indices) {
 	std::ifstream input(m_filename.c_str());
 	if (!input.good()) {
-		m_status = 1;
+		m_status = FAILED;
 		return false;
 	}
 	std::string s;
@@ -127,8 +127,7 @@ bool loader_OBJ::loadfile(std::vector<vert3> &verts, std::vector<unsigned int> &
 						addVertex(s,verts);
 						break;
 					case 'n':
-						//Only supporting normal maps, not normal vertices
-						//addVertex(s,);
+						addVertex(s,norms);
 						break;
 					default:
 						// nooo idea
@@ -160,12 +159,19 @@ bool loader_OBJ::loadfile(std::vector<vert3> &verts, std::vector<unsigned int> &
 
 void loader_OBJ::load() {
 	std::vector<vert3> verts;
+	std::vector<vert3> norms;
 	std::vector<unsigned int> indices;
-	if (!loadfile(verts,indices)) {
+	if (!loadfile(verts,norms,indices)) {
 		//Error occued
+		m_status = FAILED;
 		return;
 	}
-	m_data.model.load(verts,indices);
-
-
+	if (!m_data.model.loadMesh(verts,indices) ||
+		!m_data.model.loadMaterial("BASIC",NULL,0,
+				"resource/color.ps","ColorPixelShader",
+				"resource/color.vs","ColorVertexShader")) {
+		m_status = FAILED;
+		return;
+	}
+	m_status = LOADED;
 }
