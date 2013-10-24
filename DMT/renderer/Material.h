@@ -25,7 +25,7 @@ public:
 		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
 		const SiString& vertexShader_filename,const SiString& vertexShader_funcname);
 
-private:
+//private:
 	SiString m_name;
 	SiString m_texName[4];
 	Texture* m_textures[4];

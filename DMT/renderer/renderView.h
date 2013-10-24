@@ -11,9 +11,10 @@ struct viewport {
 	float maxDepth;
 };
 struct renderView {
-	vert4 origin;
-	vert4 clearColor;
+	vec4 origin;
+	vec4 clearColor;
 	mat4 projection;
+	mat4 viewMat;
 	viewport view; 
 	//Texture* viewTexture;
 	Texture* stencilTexture;

@@ -82,5 +82,9 @@ void Sys_CreateScreenBuffers(renderView &view);
 
 void Sys_ReleaseTexture(Sys_texture_t& texture);
 extern struct Shader;
+void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const size_t dSize,
+							   const unsigned int numBuffers, const unsigned int whichBuffer);
 bool Sys_Shader_Create(Shader *shader);
+void Sys_Shader_Set(Sys_VS_t &vs,Sys_PS_t &ps);
+void Sys_Draw_Indexed(RenderBuffer &verts,RenderBuffer &indices);
 #endif

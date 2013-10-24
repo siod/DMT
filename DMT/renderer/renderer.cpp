@@ -19,7 +19,7 @@ void Renderer::init() {
 	params.deviceFlags = 1;
 	Sys_InitGraphics(params);
 	renderView screen;
-	screen.clearColor= vert4(1.0f,0.0f,0.0f,1.0f);
+	screen.clearColor= vec4(1.0f,0.0f,0.0f,1.0f);
 	screen.view.topLeftX = 0;
 	screen.view.topLeftY = 0;
 	screen.view.height = screenHeight;
@@ -48,6 +48,19 @@ void Renderer::allocateView(renderView& view) {
 void Renderer::frame() {
 	for(int i(0),count(m_views.size());i < count;++i) {
 		Sys_SetandClearView(m_views[i]);
+		for (int j = 0; j < m_queue.size(); ++j)
+		{
+			Sys_Shader_Set(m_queue[j]->model.material->m_VS->vs,m_queue[j]->model.material->m_PS->ps);
+			mat4 data[3];
+
+			data[0] = translate(mat4(1.0f),m_queue[j]->pos);
+			data[1] = m_views[i].viewMat;
+			data[2] = m_views[i].projection;
+						
+			Sys_Shader_SetConstBuffer(m_queue[j]->model.material->m_VS->registers[0],(const void**)&data,sizeof(mat4)*3,1,0);
+			Sys_Draw_Indexed(*m_queue[j]->model.points,*m_queue[j]->model.indices);
+
+		}
 		Sys_SwapAndDisplay();
 	}
 }

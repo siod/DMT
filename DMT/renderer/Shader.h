@@ -17,6 +17,7 @@ struct Shader {
 	SiString m_FileName;
 	S_Type type; 
 	unsigned int flags;
+	Sys_Buff_t registers[2];
 
 };
 

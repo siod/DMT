@@ -1,6 +1,16 @@
 
 #ifndef _SIMATH_
 #define _SIMATH_
+#include "..\glm\glm\glm.hpp"
+#include "..\glm\glm\gtc\matrix_transform.hpp"
+#include "..\glm\glm\gtc\type_ptr.hpp"
+using glm::vec3;
+using glm::vec4;
+using glm::mat4;
+using glm::perspective;
+using glm::translate;
+using glm::scale;
+/*
 struct vert3 {
 public:
 	vert3():x(0),y(0),z(0) {}
@@ -33,4 +43,5 @@ public:
 struct mat4 {
 
 };
+*/
 #endif

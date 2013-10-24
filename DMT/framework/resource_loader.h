@@ -21,8 +21,8 @@ public:
 				if (loader.m_status == File_resource_loader::LOADED) {
 					LogLine("Resource Loaded",Logging::LOG_INFO);
 					loader.m_data.hidden = false;
-					loader.m_data.pos = vert3(1.0,1.0,1.0);
-					loader.m_data.rot = vert4(1.0,0.0,0.0,1.0);
+					loader.m_data.pos = vec3(1.0,1.0,1.0);
+					loader.m_data.rot = vec4(1.0,0.0,0.0,1.0);
 					return loader.m_data;
 				} else {
 					LogLine("Failed to load Resource",Logging::LOG_ERROR);

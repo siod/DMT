@@ -13,18 +13,12 @@ struct RenderBuffer {
 		STAGING
 	};
 	Sys_vertBuff_t data;
-	unsigned int size;
 	BUF_TYPE type;
 	USAGE usage;
+	unsigned int size;
+	unsigned int stride;
+	unsigned int format;
 	bool cpu_writable;
 
 };
 
-
-
-class vertexBuffer {
-
-
-
-
-};

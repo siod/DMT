@@ -12,8 +12,8 @@ public:
 
 	renderModel model;
 	bool	hidden;
-	vert3 pos;
-	vert4 rot;
+	vec3 pos;
+	vec4 rot;
 
 };
 #endif

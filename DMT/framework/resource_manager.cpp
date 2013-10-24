@@ -3,6 +3,6 @@
 void Resource_manager::init() {
 
 }
-void Resource_manager::loadEntity(const char* name) {
-	Resource_loader::Load(Resource_loader::RESOURCE_OBJ,name);
+entity* Resource_manager::loadEntity(const char* name) {
+	return addEntity("utah teapot",Resource_loader::Load(Resource_loader::RESOURCE_OBJ,name));
 }

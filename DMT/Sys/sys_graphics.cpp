@@ -63,7 +63,7 @@ void Sys_InitWindowClass() {
 
 	if( !RegisterClass(&wc) )
 	{
-		Log("RegisterClass FAILED",Logging::LOG_ERROR);
+		LogLine("RegisterClass FAILED",Logging::LOG_ERROR);
 		PostQuitMessage(0);
 	}
 	win32.windowRegistered = true;
@@ -81,7 +81,7 @@ void Sys_CreateWindow(driver_params_t params) {
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, win32.hInstance, NULL); 
 	if( !win32.hWnd )
 	{
-		Log("CreateWindow FAILED",Logging::LOG_ERROR);
+		LogLine("CreateWindow FAILED",Logging::LOG_ERROR);
 		PostQuitMessage(0);
 	}
 
@@ -170,8 +170,10 @@ void Sys_ConvertBufferFormat(D3D11_BUFFER_DESC &sysbuffer, const RenderBuffer &e
 	sysbuffer.Usage = sys_buffer_usage_lt[engineBuffer.usage];
     sysbuffer.BindFlags = sys_buffer_bind_lt[engineBuffer.type];
     sysbuffer.ByteWidth = engineBuffer.size;
-	sysbuffer.CPUAccessFlags = (engineBuffer.cpu_writable) ? D3D11_CPU_ACCESS_WRITE : D3D11_CPU_ACCESS_READ;
+	sysbuffer.CPUAccessFlags = 0;
+	//sysbuffer.CPUAccessFlags = (engineBuffer.cpu_writable) ? D3D11_CPU_ACCESS_WRITE : D3D11_CPU_ACCESS_READ;
 	sysbuffer.MiscFlags = 0;
+	sysbuffer.StructureByteStride = engineBuffer.stride;
 }
 
 DXGI_FORMAT Sys_ConvertTextureFormat(const int engineFormat) {
@@ -184,6 +186,8 @@ DXGI_FORMAT Sys_ConvertTextureFormat(const int engineFormat) {
 			return DXGI_FORMAT_D24_UNORM_S8_UINT;
 		case 2:
 			return DXGI_FORMAT_R8G8B8A8_UNORM;
+		case 3:
+			return DXGI_FORMAT_R32_UINT;
 	}
 }
 
@@ -266,7 +270,7 @@ void Sys_SetandClearView(const renderView &view) {
 	Sys_convertViewPort(view.view,viewPort);
 	win32.pContext->RSSetViewports(1,&viewPort);
 	win32.pContext->OMSetRenderTargets(1,&view.res.target,view.res.stencil);
-	win32.pContext->ClearRenderTargetView(view.res.target,view.clearColor.data);
+	win32.pContext->ClearRenderTargetView(view.res.target,glm::value_ptr(view.clearColor));
 	win32.pContext->ClearDepthStencilView(view.res.stencil, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
 }
 
@@ -280,10 +284,10 @@ bool Sys_CreateBuffer(RenderBuffer* buffer,void* data) {
 }
 
 void Sys_Log_Shader_Errors(ID3D10Blob *errors,const SiString& shaderName) {
-	Log(shaderName + "failed to Compile",Logging::LOG_ERROR);
+	LogLine(shaderName + "failed to Compile",Logging::LOG_ERROR);
 	char* errorMsg = static_cast<char*>(errors->GetBufferPointer());
 	size_t bufSize = errors->GetBufferSize();
-	Log(errorMsg,Logging::LOG_ERROR);
+	LogLine(errorMsg,Logging::LOG_ERROR);
 	errors->Release();
 }
 
@@ -311,7 +315,7 @@ ID3D10Blob* Sys_Shader_Compile(const SiString& filename,const SiString& shaderFu
 		if (errors)
 			Sys_Log_Shader_Errors(errors,filename);
 		else
-			Log("Unable to find shader file: " + filename,Logging::LOG_ERROR);
+			LogLine("Unable to find shader file: " + filename,Logging::LOG_ERROR);
 		return NULL;
 	}
 	return shader;
@@ -329,7 +333,7 @@ bool Sys_Shader_Create(Shader *shader) {
 	//Compile Shader
 	ID3D10Blob* byteCode = Sys_Shader_Compile(shader->m_FileName,
 		shader->m_FuncName,Sys_Shader_convert_type(shader->type));
-	if (shader == NULL)
+	if (byteCode == NULL)
 		return false;
 	//Create Shader
 	HRESULT result;
@@ -342,11 +346,11 @@ bool Sys_Shader_Create(Shader *shader) {
 			result = win32.pDevice->CreatePixelShader(byteCode->GetBufferPointer(),byteCode->GetBufferSize(),NULL,&shader->ps.shader);
 			break;
 		default:
-			Log("Uknown shader type",Logging::LOG_ERROR);
+			LogLine("Uknown shader type",Logging::LOG_ERROR);
 			break;
 	}
 	if (FAILED(result)) {
-		Log("Unable to create shader " + shader->m_FileName,Logging::LOG_ERROR);
+		LogLine("Unable to create shader " + shader->m_FileName,Logging::LOG_ERROR);
 		return false;
 	}
 	if (shader->type == Shader::S_PIXEL)
@@ -354,15 +358,35 @@ bool Sys_Shader_Create(Shader *shader) {
 
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		/*
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BINORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		*/
 	};
-	HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,5,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
+	//HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,5,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
+	HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,1,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
 	if (FAILED(inputResult)) {
-		Log("Unable to create vertex input layout",Logging::LOG_ERROR);
+		LogLine("Unable to create vertex input layout",Logging::LOG_ERROR);
 			return false;
 	}
 	return true;
 }
+
+
+void Sys_Shader_Set(Sys_VS_t &vs,Sys_PS_t &ps) {
+	win32.pContext->IASetInputLayout(vs.mVertexLayout);
+	win32.pContext->PSSetShader(ps.shader,NULL,0);
+	win32.pContext->VSSetShader(vs.shader,NULL,0);
+}
+
+void Sys_Draw_Indexed(RenderBuffer &verts,RenderBuffer &indices) {
+	win32.pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+	unsigned int stride = sizeof(vec3);
+	unsigned int offset = 0;
+	win32.pContext->IASetVertexBuffers(0,1,&verts.data.res,&stride,&offset);
+	win32.pContext->IASetIndexBuffer(indices.data.res,Sys_ConvertTextureFormat(indices.format),0);
+	win32.pContext->DrawIndexed(indices.size,0,0);
+}
+

@@ -5,10 +5,10 @@
 
 
 //http://en.wikipedia.org/wiki/Wavefront_.obj_file
-void loader_OBJ::addVertex(std::string& input,std::vector<vert3>& vec) {
+void loader_OBJ::addVertex(std::string& input,std::vector<vec3>& vec) {
 	std::stringstream data(input);
 	data.ignore(5,' ');
-	vert3 temp;
+	vec3 temp;
 	data >> temp.x;
 	data >> temp.y;
 	data >> temp.z;
@@ -16,7 +16,7 @@ void loader_OBJ::addVertex(std::string& input,std::vector<vert3>& vec) {
 }
 
 /*
-void loader_OBJ::LightingInfo(std::string& input,size_t num,std::vector<vert3>& vec) {
+void loader_OBJ::LightingInfo(std::string& input,size_t num,std::vector<vec3>& vec) {
 	std::stringstream data(input);
 	data.ignore(5,' ');
 	float temp;
@@ -110,7 +110,7 @@ void loader_OBJ::readMtl(const std::string& filename) {
 
 
 
-bool loader_OBJ::loadfile(std::vector<vert3> &verts, std::vector<vert3> &norms, std::vector<unsigned int> &indices) {
+bool loader_OBJ::loadfile(std::vector<vec3> &verts, std::vector<vec3> &norms, std::vector<unsigned int> &indices) {
 	std::ifstream input(m_filename.c_str());
 	if (!input.good()) {
 		m_status = FAILED;
@@ -158,8 +158,8 @@ bool loader_OBJ::loadfile(std::vector<vert3> &verts, std::vector<vert3> &norms, 
 }
 
 void loader_OBJ::load() {
-	std::vector<vert3> verts;
-	std::vector<vert3> norms;
+	std::vector<vec3> verts;
+	std::vector<vec3> norms;
 	std::vector<unsigned int> indices;
 	if (!loadfile(verts,norms,indices)) {
 		//Error occued
@@ -168,8 +168,8 @@ void loader_OBJ::load() {
 	}
 	if (!m_data.model.loadMesh(verts,indices) ||
 		!m_data.model.loadMaterial("BASIC",NULL,0,
-				"resource/color.ps","ColorPixelShader",
-				"resource/color.vs","ColorVertexShader")) {
+				"../resources/color.ps","ColorPixelShader",
+				"../resources/color.vs","ColorVertexShader")) {
 		m_status = FAILED;
 		return;
 	}
