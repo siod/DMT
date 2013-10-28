@@ -3,6 +3,7 @@
 #include "..\framework\typedefs.h"
 #include "..\Sys\sys_graphics.h"
 #include "vertexBuff.h"
+#include "types.h"
 
 struct Shader {
 	enum S_Type {
@@ -15,6 +16,7 @@ struct Shader {
 		Sys_VS_t vs;
 	};
 	Sys_Layout_t layout;
+	BUFFER_LAYOUT m_layout;
 	SiString m_FuncName;
 	SiString m_FileName;
 	S_Type type; 

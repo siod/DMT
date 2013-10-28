@@ -116,5 +116,8 @@
     <ClInclude Include="glm\glm\glm.hpp">
       <Filter>glm</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\types.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

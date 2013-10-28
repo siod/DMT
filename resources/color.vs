@@ -8,7 +8,8 @@ cbuffer MatrixBuffer
 
 struct VSInput {
 	float3 pos: POSITION0;
-	//float3 nor: NORMAL0;
+	float3 nor: NORMAL0;
+	float2 tex: TEXCOORD0;
 };
 
 

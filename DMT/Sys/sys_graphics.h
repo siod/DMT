@@ -2,6 +2,7 @@
 #ifndef _SYS_GRAPHICS_
 #define _SYS_GRAPHICS_
 #include "..\framework\typedefs.h"
+#include "..\renderer\types.h"
 #include <D3D11.h>
 typedef struct {
 	int width;
@@ -82,7 +83,8 @@ void Sys_ReleaseTexture(Sys_texture_t& texture);
 extern struct Shader;
 void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const size_t dSize,
 							   const unsigned int numBuffers, const unsigned int whichBuffer);
-bool Sys_Shader_Create(Shader *shader);
+bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout);
 void Sys_Shader_Set(Sys_VS_t &vs,Sys_Layout_t &layout,Sys_PS_t &ps);
 void Sys_Draw_Indexed(Buffer &verts,Buffer &indices);
+void Sys_Draw(Buffer &verts);
 #endif

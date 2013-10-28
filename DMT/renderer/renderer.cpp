@@ -68,13 +68,13 @@ void Renderer::frame() {
 			Sys_Shader_Set(m_queue[j]->model.material->m_VS->vs,m_queue[j]->model.material->m_VS->layout,m_queue[j]->model.material->m_PS->ps);
 			mat4 data[3];
 
-			//data[0] = glm::transpose(translate(ident,m_queue[j]->pos));
 			data[0] = ident;
 			data[1] = (m_views[i].viewMat);
 			data[2] = (m_views[i].projection);
 						
 			Sys_Shader_SetConstBuffer(m_queue[j]->model.material->m_VS->registers[0].data,(const void**)glm::value_ptr(data[0]),sizeof(mat4)*3,1,0);
-			Sys_Draw_Indexed(*m_queue[j]->model.points,*m_queue[j]->model.indices);
+			Sys_Draw(*m_queue[j]->model.points);
+			//Sys_Draw_Indexed(*m_queue[j]->model.points,*m_queue[j]->model.indices);
 
 		}
 		Sys_SwapAndDisplay();

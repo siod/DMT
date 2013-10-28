@@ -40,6 +40,7 @@
     <ClInclude Include="renderer\Shader.h" />
     <ClInclude Include="renderer\Texture.h" />
     <ClInclude Include="renderer\TextureManager.h" />
+    <ClInclude Include="renderer\types.h" />
     <ClInclude Include="renderer\vertexBuff.h" />
     <ClInclude Include="sys\sys_graphics.h" />
     <ClInclude Include="Sys\sys_public.h" />

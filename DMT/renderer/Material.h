@@ -23,7 +23,7 @@ public:
 
 	void init( const SiString& name,const SiString* textureNames,const unsigned int numTextures,
 		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
-		const SiString& vertexShader_filename,const SiString& vertexShader_funcname);
+		const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout);
 
 //private:
 	SiString m_name;

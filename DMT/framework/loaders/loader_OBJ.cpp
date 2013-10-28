@@ -8,13 +8,24 @@
 void loader_OBJ::addVertex(std::string& input,std::vector<vec3>& vec) {
 	std::stringstream data(input);
 	data.ignore(5,' ');
-	vec3 temp;
-	data >> temp.x;
-	data >> temp.y;
-	data >> temp.z;
-	vec.push_back(temp);
+	vec3 vertex;
+	data >> vertex.x;
+	data >> vertex.y;
+	data >> vertex.z;
+	vec.push_back(vertex);
 }
 
+void loader_OBJ::addTexCoord(std::string& input,std::vector<vec2>& vec) {
+	std::stringstream data(input);
+	data.ignore(5,' ');
+	vec2 coord;
+	data >> coord.x;
+	data >> coord.y;
+	// Not supporting 3d tex coords
+	float junk;
+	data >> junk;
+	vec.push_back(coord);
+}
 /*
 void loader_OBJ::LightingInfo(std::string& input,size_t num,std::vector<vec3>& vec) {
 	std::stringstream data(input);
@@ -27,25 +38,27 @@ void loader_OBJ::LightingInfo(std::string& input,size_t num,std::vector<vec3>& v
 }
 */
 
-void loader_OBJ::addFace(std::string& input,std::vector<unsigned int>& indices) {
+void loader_OBJ::addFace(std::string& input,std::vector<INDEX_TYPE>& vindices,std::vector<INDEX_TYPE>& nindices,std::vector<INDEX_TYPE>& tindices) {
 	std::stringstream data(input);
 	data.ignore(5,' ');
-	unsigned int index[3];
-	unsigned int norm;
-	unsigned int tc;
+	INDEX_TYPE index[3];
+	INDEX_TYPE norm[3];
+	INDEX_TYPE tc[3];
 	for (size_t i(0);i<3;++i) {
 		data >> index[i];
 		data.ignore(1);
 		//Texture co-ords
-		data >> tc;
+		data >> tc[i];
 		data.ignore(1);
 		//For normal data, but not used
-		data >> norm;
+		data >> norm[i];
 	}
 	// obj counts from 1 not 0
-	indices.push_back(index[2]-1);
-	indices.push_back(index[1]-1);
-	indices.push_back(index[0]-1);
+	for (int i(2);i >= 0;--i) {
+		vindices.push_back(index[i]-1);
+		tindices.push_back(tc[i] -1);
+		nindices.push_back(norm[i] -1);
+	}
 }
 
 /*
@@ -114,7 +127,7 @@ void loader_OBJ::readMtl(const std::string& filename) {
 
 
 
-bool loader_OBJ::loadfile(std::vector<vec3> &verts, std::vector<vec3> &norms, std::vector<unsigned int> &indices) {
+bool loader_OBJ::loadfile(std::vector<vec3> &verts, std::vector<vec3> &norms,std::vector<vec2> &texCoords, std::vector<INDEX_TYPE> &vindices,std::vector<INDEX_TYPE> &nindices,std::vector<INDEX_TYPE> &tindices) {
 	std::ifstream input(m_filename.c_str());
 	if (!input.good()) {
 		m_status = FAILED;
@@ -133,14 +146,16 @@ bool loader_OBJ::loadfile(std::vector<vec3> &verts, std::vector<vec3> &norms, st
 					case 'n':
 						addVertex(s,norms);
 						break;
+					case 't':
+						addTexCoord(s,texCoords);
+						break;
 					default:
-						// nooo idea
 						break;
 				}
 				break;
 
 			case 'f':
-				addFace(s,indices);
+				addFace(s,vindices,nindices,tindices);
 				break;
 
 			case 'o':
@@ -161,24 +176,37 @@ bool loader_OBJ::loadfile(std::vector<vec3> &verts, std::vector<vec3> &norms, st
 
 }
 
+struct vnt {
+	vec3 vertex;
+	vec3 norm;
+	vec2 tc;
+};
 void loader_OBJ::load() {
 	std::vector<vec3> verts;
 	std::vector<vec3> norms;
-	std::vector<vec3> vertsDX;
-	std::vector<unsigned int> indices;
-	if (!loadfile(verts,norms,indices)) {
+	std::vector<vec2> texCoords;
+	std::vector<INDEX_TYPE> vindices;
+	std::vector<INDEX_TYPE> nindices;
+	std::vector<INDEX_TYPE> tindices;
+	if (!loadfile(verts,norms,texCoords,vindices,nindices,tindices)) {
 		//Error occued
 		m_status = FAILED;
 		return;
 	}
-	for (int i(0);i< indices.size();i++) {
-		vertsDX.push_back(verts[indices[i]]);
+
+	std::vector<vnt> finalOutput;
+	for (size_t i(0);i <vindices.size();++i) {
+		vnt temp;
+		temp.vertex = verts[vindices[i]];
+		temp.norm = norms[nindices[i]];
+		temp.tc = texCoords[tindices[i]];
+		finalOutput.push_back(temp);
 	}
-	
-	if (!m_data.model.loadMesh(vertsDX,indices) ||
+	BUFFER_LAYOUT layout(BUFFER_LAYOUT::POS_NORM_TC);
+	if (!m_data.model.loadMesh(finalOutput,vindices,layout) ||
 		!m_data.model.loadMaterial("BASIC",NULL,0,
 				"../resources/color.ps","ColorPixelShader",
-				"../resources/color.vs","ColorVertexShader")) {
+				"../resources/color.vs","ColorVertexShader",layout)) {
 		m_status = FAILED;
 		return;
 	}

@@ -347,7 +347,7 @@ const SiString& Sys_Shader_convert_type(Shader::S_Type type) {
 	return sys_shader_typ_lt[type];
 }
 
-bool Sys_Shader_Create(Shader *shader) {
+bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout) {
 	//Compile Shader
 	ID3D10Blob* byteCode = Sys_Shader_Compile(shader->m_FileName,
 		shader->m_FuncName,Sys_Shader_convert_type(shader->type));
@@ -374,17 +374,41 @@ bool Sys_Shader_Create(Shader *shader) {
 	if (shader->type == Shader::S_PIXEL)
 		return true;
 
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		/*
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BINORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		*/
-	};
-	//HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,5,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
-	HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,1,byteCode->GetBufferPointer(),
+	D3D11_INPUT_ELEMENT_DESC layoutDesc[3];
+	switch (layout) {
+		case BUFFER_LAYOUT::POS_NORM_TC:
+			layoutDesc[2].SemanticName = "TEXCOORD";
+			layoutDesc[2].SemanticIndex = 0;
+			layoutDesc[2].Format =DXGI_FORMAT_R32G32_FLOAT;
+			layoutDesc[2].InputSlot = 0;
+			layoutDesc[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+			layoutDesc[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			layoutDesc[2].InstanceDataStepRate = 0;
+
+		case BUFFER_LAYOUT::POS_NORM:
+			layoutDesc[1].SemanticName = "NORMAL";
+			layoutDesc[1].SemanticIndex = 0;
+			layoutDesc[1].Format =DXGI_FORMAT_R32G32B32_FLOAT;
+			layoutDesc[1].InputSlot = 0;
+			layoutDesc[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+			layoutDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			layoutDesc[1].InstanceDataStepRate = 0;
+
+		case BUFFER_LAYOUT::POS:
+			layoutDesc[0].SemanticName = "POSITION";
+			layoutDesc[0].SemanticIndex = 0;
+			layoutDesc[0].Format =DXGI_FORMAT_R32G32B32_FLOAT;
+			layoutDesc[0].InputSlot = 0;
+			layoutDesc[0].AlignedByteOffset = 0;
+			layoutDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			layoutDesc[0].InstanceDataStepRate = 0;
+			break;
+
+		default:
+			LogLine("invalid layout for "+ shader->m_FileName,Logging::LOG_ERROR);
+			break;
+	}
+	HRESULT inputResult = win32.pDevice->CreateInputLayout(layoutDesc,(unsigned int)layout,byteCode->GetBufferPointer(),
 		byteCode->GetBufferSize(),&shader->layout.mVertexLayout);
 	if (FAILED(inputResult)) {
 		LogLine("Unable to create vertex input layout",Logging::LOG_ERROR);
@@ -400,13 +424,19 @@ void Sys_Shader_Set(Sys_VS_t &vs,Sys_Layout_t &layout,Sys_PS_t &ps) {
 	win32.pContext->VSSetShader(vs.shader,NULL,0);
 }
 
-void Sys_Draw_Indexed(Buffer &verts,Buffer &indices) {
+void Sys_Draw(Buffer &verts) {
 	win32.pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	unsigned int stride = sizeof(vec3);
+	unsigned int stride = verts.stride;
 	unsigned int offset = 0;
 	win32.pContext->IASetVertexBuffers(0,1,&verts.data.res,&stride,&offset);
-	//win32.pContext->IASetIndexBuffer(indices.data.res,Sys_ConvertTextureFormat(indices.format),0);
 	win32.pContext->Draw(verts.size,0);
-	//win32.pContext->DrawIndexed(indices.size,0,0);
+}
+void Sys_Draw_Indexed(Buffer &verts,Buffer &indices) {
+	win32.pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	unsigned int stride = verts.stride;
+	unsigned int offset = 0;
+	win32.pContext->IASetVertexBuffers(0,1,&verts.data.res,&stride,&offset);
+	win32.pContext->IASetIndexBuffer(indices.data.res,Sys_ConvertTextureFormat(indices.format),0);
+	win32.pContext->DrawIndexed(indices.size,0,0);
 }
 

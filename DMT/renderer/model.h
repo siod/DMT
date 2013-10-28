@@ -4,8 +4,10 @@
 #include <vector>
 #include "..\framework\math.h"
 #include "Material.h"
+#include "types.h"
 extern struct Buffer;
 class renderModel {
+	bool renderModel::loadMeshRaw(void* vertexBuffer,size_t primSize,size_t length,std::vector<unsigned int>& indexBuffer,BUFFER_LAYOUT format);
 public:
 	enum MODEL_STATUS {
 		OK,
@@ -16,12 +18,17 @@ public:
 	enum MODEL_FILE_TYPE {
 		MODEL_OBJ
 	};
+
 	renderModel():points(),indices(),material(NULL),status(INACTIVE) {}
 
-	bool loadMesh(std::vector<vec3>&,std::vector<unsigned int>&);
+	template<typename T>
+	bool loadMesh(std::vector<T>& verts,std::vector<unsigned int>&indices,BUFFER_LAYOUT format) {
+		return loadMeshRaw(&verts[0],sizeof(T),verts.size(),indices,format);
+	}
+
 	bool loadMaterial(const SiString& name,const SiString* textureNames,const unsigned int numTextures,
 		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
-		const SiString& vertexShader_filename,const SiString& vertexShader_funcname);
+		const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout);
 
 	struct Buffer* points;
 	struct Buffer* indices;

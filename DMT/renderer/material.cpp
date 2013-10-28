@@ -7,7 +7,7 @@ extern Common* common;
 
 void Material::init( const SiString& name,const SiString* textureNames,const unsigned int numTextures,
 					const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
-					const SiString& vertexShader_filename,const SiString& vertexShader_funcname) {
+					const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout) {
 	m_numTextures = numTextures;
 	m_name = name;
 	for (int i = 0; i < numTextures; i++) {
@@ -17,16 +17,19 @@ void Material::init( const SiString& name,const SiString* textureNames,const uns
 	m_PS->m_FileName = pixelShader_filename;
 	m_PS->m_FuncName = pixelShader_funcname;
 	m_PS->type = Shader::S_PIXEL;
-	Sys_Shader_Create(m_PS);
+	Sys_Shader_Create(m_PS,BUFFER_LAYOUT::NONE);
+
 	m_VS = common->m_resources->allocateShader(vertexShader_filename);
 	m_VS->m_FileName = vertexShader_filename;
 	m_VS->m_FuncName = vertexShader_funcname;
 	m_VS->type = Shader::S_VERTEX;
-	Sys_Shader_Create(m_VS);
+	Sys_Shader_Create(m_VS,layout);
+
 	m_VS->registers[0].usage = Buffer::DYNAMIC;
 	m_VS->registers[0].type = Buffer::CONSTANT;
 	m_VS->registers[0].size = sizeof(mat4)*3;
 	m_VS->registers[0].cpu_access = Buffer::WRITE;
+	//0 is allowed for unstructured data
 	m_VS->registers[0].stride = 0;
 	Sys_CreateBuffer(&m_VS->registers[0],NULL);
 }
