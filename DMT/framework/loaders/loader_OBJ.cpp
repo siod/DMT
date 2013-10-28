@@ -30,18 +30,22 @@ void loader_OBJ::LightingInfo(std::string& input,size_t num,std::vector<vec3>& v
 void loader_OBJ::addFace(std::string& input,std::vector<unsigned int>& indices) {
 	std::stringstream data(input);
 	data.ignore(5,' ');
-	unsigned int temp;
+	unsigned int index[3];
+	unsigned int norm;
+	unsigned int tc;
 	for (size_t i(0);i<3;++i) {
-		data >> temp;
-		// obj counts from 1 not 0
-		indices.push_back(temp-1);
+		data >> index[i];
 		data.ignore(1);
 		//Texture co-ords
-		data >> temp;
+		data >> tc;
 		data.ignore(1);
-		data >> temp;
 		//For normal data, but not used
+		data >> norm;
 	}
+	// obj counts from 1 not 0
+	indices.push_back(index[2]-1);
+	indices.push_back(index[1]-1);
+	indices.push_back(index[0]-1);
 }
 
 /*
@@ -160,13 +164,18 @@ bool loader_OBJ::loadfile(std::vector<vec3> &verts, std::vector<vec3> &norms, st
 void loader_OBJ::load() {
 	std::vector<vec3> verts;
 	std::vector<vec3> norms;
+	std::vector<vec3> vertsDX;
 	std::vector<unsigned int> indices;
 	if (!loadfile(verts,norms,indices)) {
 		//Error occued
 		m_status = FAILED;
 		return;
 	}
-	if (!m_data.model.loadMesh(verts,indices) ||
+	for (int i(0);i< indices.size();i++) {
+		vertsDX.push_back(verts[indices[i]]);
+	}
+	
+	if (!m_data.model.loadMesh(vertsDX,indices) ||
 		!m_data.model.loadMaterial("BASIC",NULL,0,
 				"../resources/color.ps","ColorPixelShader",
 				"../resources/color.vs","ColorVertexShader")) {

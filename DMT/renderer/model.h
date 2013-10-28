@@ -4,7 +4,7 @@
 #include <vector>
 #include "..\framework\math.h"
 #include "Material.h"
-extern struct RenderBuffer;
+extern struct Buffer;
 class renderModel {
 public:
 	enum MODEL_STATUS {
@@ -23,8 +23,8 @@ public:
 		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
 		const SiString& vertexShader_filename,const SiString& vertexShader_funcname);
 
-	struct RenderBuffer* points;
-	struct RenderBuffer* indices;
+	struct Buffer* points;
+	struct Buffer* indices;
 	//VertBuff* normals; No vertex based normal maps
 	Material* material;
 	MODEL_STATUS status;

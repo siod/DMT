@@ -3,25 +3,26 @@
 #include "..\framework\resource_manager.h"
 #include "..\framework\Common.h"
 extern Common* common;
-bool Sys_CreateBuffer(RenderBuffer* buffer,void* data);
+bool Sys_CreateBuffer(Buffer* buffer,void* data);
 bool renderModel::loadMesh(std::vector<vec3>& vertexBuffer,std::vector<unsigned int>& indexBuffer) {
-	RenderBuffer* verts = new RenderBuffer();
-	verts->cpu_writable = false;
-	verts->size = vertexBuffer.size()*sizeof(vec3);
-	verts->type = RenderBuffer::BUF_TYPE::VERTEX;
-	verts->usage = RenderBuffer::USAGE::IMMUTABLE;
+	Buffer* verts = new Buffer();
+	verts->cpu_access = Buffer::NONE;
+	verts->size = vertexBuffer.size();
+	verts->type = Buffer::BUF_TYPE::VERTEX;
+	verts->usage = Buffer::USAGE::IMMUTABLE;
 	verts->stride = sizeof(vec3);
+	//verts->stride = sizeof(float);
 	if (Sys_CreateBuffer(verts,&vertexBuffer[0]))
 		points = verts;
 
-	RenderBuffer* index = new RenderBuffer();
-	index->cpu_writable = false;
-	index->size = indexBuffer.size()*sizeof(unsigned int);
-	index->type = RenderBuffer::BUF_TYPE::INDEX;
-	index->usage = RenderBuffer::USAGE::IMMUTABLE;
+	Buffer* index = new Buffer();
+	index->cpu_access = Buffer::NONE;
+	index->size = indexBuffer.size();
+	index->type = Buffer::BUF_TYPE::INDEX;
+	index->usage = Buffer::USAGE::IMMUTABLE;
 	index->stride = sizeof(unsigned int);
 	index->format = 3;
-	if (Sys_CreateBuffer(verts,&indexBuffer[0]))
+	if (Sys_CreateBuffer(index,&indexBuffer[0]))
 		indices = index;
 	return true;
 

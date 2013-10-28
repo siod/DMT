@@ -124,6 +124,15 @@ void Sys_InitGraphicsDriver(driver_params_t params) {
 		&win32.pDevice,
 		&featureLvl,
 		&win32.pContext) );
+	ID3D11RasterizerState* pRState(NULL);
+	D3D11_RASTERIZER_DESC rDesc;
+	ZeroMemory(&rDesc,sizeof(rDesc));
+	//rDesc.CullMode = D3D11_CULL_NONE;
+	rDesc.CullMode = D3D11_CULL_BACK;
+	//rDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rDesc.FillMode = D3D11_FILL_SOLID;
+	win32.pDevice->CreateRasterizerState(&rDesc,&pRState);
+	win32.pContext->RSSetState(pRState);
 
 }
 
@@ -166,12 +175,17 @@ const D3D11_BIND_FLAG sys_buffer_bind_lt[] = {
 	D3D11_BIND_DEPTH_STENCIL 
 };
 
-void Sys_ConvertBufferFormat(D3D11_BUFFER_DESC &sysbuffer, const RenderBuffer &engineBuffer) {
+const unsigned int sys_buffer_cpu_access_lt[] = {
+	0,
+	D3D11_CPU_ACCESS_READ,
+	D3D11_CPU_ACCESS_WRITE
+};
+
+void Sys_ConvertBufferFormat(D3D11_BUFFER_DESC &sysbuffer, const Buffer &engineBuffer) {
 	sysbuffer.Usage = sys_buffer_usage_lt[engineBuffer.usage];
     sysbuffer.BindFlags = sys_buffer_bind_lt[engineBuffer.type];
-    sysbuffer.ByteWidth = engineBuffer.size;
-	sysbuffer.CPUAccessFlags = 0;
-	//sysbuffer.CPUAccessFlags = (engineBuffer.cpu_writable) ? D3D11_CPU_ACCESS_WRITE : D3D11_CPU_ACCESS_READ;
+    sysbuffer.ByteWidth = engineBuffer.size*max(engineBuffer.stride,1u);
+	sysbuffer.CPUAccessFlags = sys_buffer_cpu_access_lt[engineBuffer.cpu_access];
 	sysbuffer.MiscFlags = 0;
 	sysbuffer.StructureByteStride = engineBuffer.stride;
 }
@@ -274,9 +288,13 @@ void Sys_SetandClearView(const renderView &view) {
 	win32.pContext->ClearDepthStencilView(view.res.stencil, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
 }
 
-bool Sys_CreateBuffer(RenderBuffer* buffer,void* data) {
+bool Sys_CreateBuffer(Buffer* buffer,void* data) {
 	D3D11_BUFFER_DESC bd;
 	Sys_ConvertBufferFormat(bd,*buffer);
+	if (data == NULL) {
+		HR(win32.pDevice->CreateBuffer(&bd,NULL,&buffer->data.res));
+		return true;
+	}
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data;
 	HR(win32.pDevice->CreateBuffer(&bd,&initData,&buffer->data.res));
@@ -299,7 +317,7 @@ void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const s
 		if (FAILED(result)) {
 			return;
 		}
-		memcpy(res.pData,data[bufNum],dSize);
+		memcpy(res.pData,data,dSize);
 		win32.pContext->Unmap(constBuffer.res,0);
 		win32.pContext->VSSetConstantBuffers(bufNum,1,&constBuffer.res);
 	}
@@ -308,7 +326,7 @@ void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const s
 ID3D10Blob* Sys_Shader_Compile(const SiString& filename,const SiString& shaderFuncName,const SiString& type) {
 	ID3D10Blob* shader(0);
 	ID3D10Blob* errors(0);
-	unsigned int flags(0);
+	unsigned int flags(D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION);
 	//http://msdn.microsoft.com/en-us/library/windows/desktop/ff476261%28v=vs.85%29.aspx
 	HRESULT result = D3DX11CompileFromFileA(filename.c_str(),NULL,NULL,shaderFuncName.c_str(),type.c_str(),flags,0,NULL,&shader,&errors,NULL);
 	if (FAILED(result)) {
@@ -366,7 +384,8 @@ bool Sys_Shader_Create(Shader *shader) {
 		*/
 	};
 	//HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,5,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
-	HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,1,byteCode->GetBufferPointer(),byteCode->GetBufferSize(),&shader->vs.mVertexLayout);
+	HRESULT inputResult = win32.pDevice->CreateInputLayout(layout,1,byteCode->GetBufferPointer(),
+		byteCode->GetBufferSize(),&shader->layout.mVertexLayout);
 	if (FAILED(inputResult)) {
 		LogLine("Unable to create vertex input layout",Logging::LOG_ERROR);
 			return false;
@@ -375,18 +394,19 @@ bool Sys_Shader_Create(Shader *shader) {
 }
 
 
-void Sys_Shader_Set(Sys_VS_t &vs,Sys_PS_t &ps) {
-	win32.pContext->IASetInputLayout(vs.mVertexLayout);
+void Sys_Shader_Set(Sys_VS_t &vs,Sys_Layout_t &layout,Sys_PS_t &ps) {
+	win32.pContext->IASetInputLayout(layout.mVertexLayout);
 	win32.pContext->PSSetShader(ps.shader,NULL,0);
 	win32.pContext->VSSetShader(vs.shader,NULL,0);
 }
 
-void Sys_Draw_Indexed(RenderBuffer &verts,RenderBuffer &indices) {
-	win32.pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+void Sys_Draw_Indexed(Buffer &verts,Buffer &indices) {
+	win32.pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	unsigned int stride = sizeof(vec3);
 	unsigned int offset = 0;
 	win32.pContext->IASetVertexBuffers(0,1,&verts.data.res,&stride,&offset);
-	win32.pContext->IASetIndexBuffer(indices.data.res,Sys_ConvertTextureFormat(indices.format),0);
-	win32.pContext->DrawIndexed(indices.size,0,0);
+	//win32.pContext->IASetIndexBuffer(indices.data.res,Sys_ConvertTextureFormat(indices.format),0);
+	win32.pContext->Draw(verts.size,0);
+	//win32.pContext->DrawIndexed(indices.size,0,0);
 }
 

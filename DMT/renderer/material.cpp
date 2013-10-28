@@ -2,6 +2,7 @@
 #include "..\Sys\sys_graphics.h"
 #include "..\framework\Common.h"
 #include "..\framework\resource_manager.h"
+#include "vertexBuff.h"
 extern Common* common;
 
 void Material::init( const SiString& name,const SiString* textureNames,const unsigned int numTextures,
@@ -22,6 +23,12 @@ void Material::init( const SiString& name,const SiString* textureNames,const uns
 	m_VS->m_FuncName = vertexShader_funcname;
 	m_VS->type = Shader::S_VERTEX;
 	Sys_Shader_Create(m_VS);
+	m_VS->registers[0].usage = Buffer::DYNAMIC;
+	m_VS->registers[0].type = Buffer::CONSTANT;
+	m_VS->registers[0].size = sizeof(mat4)*3;
+	m_VS->registers[0].cpu_access = Buffer::WRITE;
+	m_VS->registers[0].stride = 0;
+	Sys_CreateBuffer(&m_VS->registers[0],NULL);
 }
 /*
 void Material::create() {

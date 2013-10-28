@@ -10,6 +10,8 @@ using glm::mat4;
 using glm::perspective;
 using glm::translate;
 using glm::scale;
+using glm::max;
+using glm::min;
 /*
 struct vert3 {
 public:

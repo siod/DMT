@@ -16,6 +16,9 @@
     <Filter Include="Framework\Loaders">
       <UniqueIdentifier>{cff5f771-f4f8-4228-ad5d-2d9bbb6d27c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="glm">
+      <UniqueIdentifier>{48ae8955-76b5-407d-a0bd-0cafbb3e1f4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sys\win_main.cpp">
@@ -109,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="renderer\Shader.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="glm\glm\glm.hpp">
+      <Filter>glm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

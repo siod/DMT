@@ -11,7 +11,7 @@ struct viewport {
 	float maxDepth;
 };
 struct renderView {
-	vec4 origin;
+	vec3 origin;
 	vec4 clearColor;
 	mat4 projection;
 	mat4 viewMat;

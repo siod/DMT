@@ -39,10 +39,9 @@ typedef struct {
 struct ID3D11Buffer;
 struct ID3D11InputLayout;
 
-typedef struct win_vertBuff_s {
-	ID3D11Buffer* res;
+typedef struct win_Layout_s {
 	ID3D11InputLayout*	mVertexLayout;
-} Sys_vertBuff_t;
+} Sys_Layout_t;
 
 typedef struct win_Buff_s {
 	ID3D11Buffer* res;
@@ -52,7 +51,6 @@ typedef struct win_Buff_s {
 struct ID3D11EffectTechnique;
 typedef struct {
 	ID3D11VertexShader* shader;
-	ID3D11InputLayout*	mVertexLayout;
 } Sys_VS_t;
 
 typedef struct {
@@ -75,8 +73,8 @@ void Sys_ConvertTextureFormat(D3D11_TEXTURE2D_DESC &desc,const Texture& engineDe
 void Sys_CreateTexture(Texture &texture);
 void Sys_LoadTextureFromFile(Texture &texture,const SiString& filename);
 Sys_texture_t Sys_LoadTexture();
-struct RenderBuffer;
-bool Sys_CreateBuffer(RenderBuffer* buffer,void* data);
+struct Buffer;
+bool Sys_CreateBuffer(Buffer* buffer,void* data);
 
 void Sys_CreateScreenBuffers(renderView &view);
 
@@ -85,6 +83,6 @@ extern struct Shader;
 void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const size_t dSize,
 							   const unsigned int numBuffers, const unsigned int whichBuffer);
 bool Sys_Shader_Create(Shader *shader);
-void Sys_Shader_Set(Sys_VS_t &vs,Sys_PS_t &ps);
-void Sys_Draw_Indexed(RenderBuffer &verts,RenderBuffer &indices);
+void Sys_Shader_Set(Sys_VS_t &vs,Sys_Layout_t &layout,Sys_PS_t &ps);
+void Sys_Draw_Indexed(Buffer &verts,Buffer &indices);
 #endif
