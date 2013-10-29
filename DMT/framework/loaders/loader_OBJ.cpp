@@ -54,7 +54,8 @@ void loader_OBJ::addFace(std::string& input,std::vector<INDEX_TYPE>& vindices,st
 		data >> norm[i];
 	}
 	// obj counts from 1 not 0
-	for (int i(2);i >= 0;--i) {
+	//for (int i(2);i >= 0;--i) {
+	for (int i(0);i < 3;++i) {
 		vindices.push_back(index[i]-1);
 		tindices.push_back(tc[i] -1);
 		nindices.push_back(norm[i] -1);

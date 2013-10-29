@@ -4,13 +4,18 @@
 #include "math.h"
 class entity {
 
-
-
 public:
-	entity():model(),hidden(true),pos(0.0f,0.0f,0.0f),rot(0.0f,0.0f,0.0f,0.0f) {}
+	enum STATE {
+		STATE_ERROR,
+		STATE_OK,
+	};
+
+
+	entity():model(),state(STATE_ERROR),hidden(true),pos(0.0f,0.0f,0.0f),rot(0.0f,0.0f,0.0f,0.0f) {}
 
 
 	renderModel model;
+	STATE state;
 	bool	hidden;
 	vec3 pos;
 	vec4 rot;

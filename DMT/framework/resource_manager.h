@@ -38,6 +38,9 @@ public:
 	}
 
 	entity* addEntity(const SiString& name,const entity & ent) {
+		if (ent.state == entity::STATE_ERROR) {
+			return NULL;
+		}
 		if (entities.find(name) != entities.end()) {
 			return &entities[name];
 		}

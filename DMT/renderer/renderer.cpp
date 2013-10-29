@@ -31,9 +31,9 @@ void Renderer::init() {
 	screen.origin = vec3(0.0f,0.0f,10.0f);
 	const mat4 dx(	1,0,0,0,
 					0,1,0,0,
-					0,0,2,0,
-					0,0,-1,1);
-	screen.projection = (perspective(60.0f,aspect,1.0f,100.0f));
+					0,0,2,-1,
+					0,0,0,1);
+	screen.projection = (perspective(60.0f,aspect,1.0f,100.0f)*dx);
 	screen.viewMat = (glm::lookAt(vec3(0,0,10),vec3(0,0,0),vec3(0.0f,1.0f,0.0f)));
 
 	screen.stencilTexture = new Texture();
@@ -60,7 +60,7 @@ void Renderer::frame() {
 	const mat4 ident(.5,0,0,0,
 					0,.5,0,0,
 					0,0,.5,-10,
-					0,0,0,.5);
+					0,0,0,1.0);
 	for(int i(0),count(m_views.size());i < count;++i) {
 		Sys_SetandClearView(m_views[i]);
 		for (int j = 0; j < m_queue.size(); ++j)

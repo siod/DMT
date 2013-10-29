@@ -1,4 +1,47 @@
+struct VSOutput {
+	float4 pos: SV_POSITION;
+	float3 norm: TEXCOORD0;
+	float3 posW: TEXCOORD1;
+};
+
+float4 ColorPixelShader(VSOutput input) : SV_TARGET {
+	// re-normalize normal
+	input.norm = normalize(input.norm);
+	float3 cameraPos = float3(0.0f,0.0f,10.0f);
+	float3 lightDir = float3(0.0f,0.0f,-1.0f);
+
+	// calculate vector to camera
+	float3 toCamera = normalize(cameraPos - input.posW);
+
+	// calculate reflection vector
+	float3 reflectVec = reflect(-lightDir, input.norm);
+	float specPower = 8.0f;
+
+	// calculate specular variable
+	float specComp = pow(max(dot(reflectVec, toCamera), 0.0f),specPower);
+
+	// calculate diffuse variable
+	float specDiff = max(dot(lightDir, input.norm), 0.0f);
+
+	// calculate the three components
+	float3 matSpecular = float3(1.0,1.0,1.0);
+	float3 matDiffuse = float3(0.0,0.0,0.5);
+	float3 matAmbient = float3(0.0,0.0,0.3);
+	float3 liSpec = float3(1.0f,1.0f,1.0f);
+	float3 liDiffuse = float3(0.5f,0.5f,0.5f);
+	float3 liAmbient = float3(0.3f,0.3f,0.3f);
+
+	float3 specular = specComp * (liSpec * matSpecular).rgb;
+	float3 diffuse = specDiff * (liDiffuse * matDiffuse).rgb;
+	float3 ambient = liAmbient * matAmbient;
+
+	return float4(diffuse + ambient + specular, 1.0f);
+}
+
+/*
 float4 ColorPixelShader(float4 position : SV_POSITION) : SV_TARGET
 {
+
     return float4(0.0f,0.0f,1.0f,1.0f);
 }
+*/

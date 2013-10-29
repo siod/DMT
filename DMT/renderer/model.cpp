@@ -12,8 +12,11 @@ bool renderModel::loadMeshRaw(void* vertexBuffer,size_t primSize,size_t length,s
 	verts->type = Buffer::BUF_TYPE::VERTEX;
 	verts->usage = Buffer::USAGE::IMMUTABLE;
 	verts->stride = primSize;
-	if (Sys_CreateBuffer(verts,vertexBuffer))
-		points = verts;
+	if (!Sys_CreateBuffer(verts,vertexBuffer)) {
+		delete verts;
+		return false;
+	}
+	points = verts;
 
 	/* Disabling Index buffers, 
 	*will enable them with better support for deduplication of vertex data
@@ -34,8 +37,7 @@ bool renderModel::loadMaterial(const SiString& name,const SiString* textureNames
 					const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
 					const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout) {
 	material = common->m_resources->allocateMaterial(name);
-	material->init(name,textureNames,numTextures,
+	return material->init(name,textureNames,numTextures,
 		pixelShader_filename,pixelShader_funcname,
 		vertexShader_filename,vertexShader_funcname,layout);
-	return true;
 }

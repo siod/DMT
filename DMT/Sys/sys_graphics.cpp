@@ -124,6 +124,7 @@ void Sys_InitGraphicsDriver(driver_params_t params) {
 		&win32.pDevice,
 		&featureLvl,
 		&win32.pContext) );
+
 	ID3D11RasterizerState* pRState(NULL);
 	D3D11_RASTERIZER_DESC rDesc;
 	ZeroMemory(&rDesc,sizeof(rDesc));
@@ -133,6 +134,37 @@ void Sys_InitGraphicsDriver(driver_params_t params) {
 	rDesc.FillMode = D3D11_FILL_SOLID;
 	win32.pDevice->CreateRasterizerState(&rDesc,&pRState);
 	win32.pContext->RSSetState(pRState);
+
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc;
+	ZeroMemory(&dsDesc,sizeof(dsDesc));
+	//Depth test params
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	//Stencil test params
+	dsDesc.StencilEnable = true;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing
+	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing
+	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create depth stencil state
+	ID3D11DepthStencilState * pDSState(NULL);
+	win32.pDevice->CreateDepthStencilState(&dsDesc, &pDSState);
+	win32.pContext->OMSetDepthStencilState(pDSState, 1);
+
 
 }
 
@@ -209,15 +241,15 @@ DXGI_FORMAT Sys_ConvertTextureFormat(const int engineFormat) {
 void Sys_ConvertTextureFormat(D3D11_TEXTURE2D_DESC &desc,const Texture &engineDesc) {
 	desc.Height = engineDesc.height;
 	desc.Width = engineDesc.width;
-	desc.Format = Sys_ConvertTextureFormat(engineDesc.format);
 	desc.MipLevels = engineDesc.mipLevels;
+	desc.ArraySize = 1;
+	desc.Format = Sys_ConvertTextureFormat(engineDesc.format);
+	desc.SampleDesc.Count =1;
+	desc.SampleDesc.Quality = 0;
 	desc.Usage = sys_buffer_usage_lt[engineDesc.usage];
 	desc.BindFlags = sys_buffer_bind_lt[engineDesc.bindFlags];
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
-	desc.ArraySize = 1;
-	desc.SampleDesc.Count =1;
-	desc.SampleDesc.Quality = 0;
 }
 
 void Sys_CreateTexture(Texture &tex) {
@@ -265,7 +297,12 @@ void Sys_CreateScreenBuffers(renderView &view) {
 	ID3D11Texture2D* backBuffer;
 	HR(win32.pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
 	HR(win32.pDevice->CreateRenderTargetView(backBuffer,0,&view.res.target));
-	HR(win32.pDevice->CreateDepthStencilView(view.stencilTexture->texture.res,NULL,&view.res.stencil));
+	D3D11_DEPTH_STENCIL_VIEW_DESC stencilDesc;
+	ZeroMemory(&stencilDesc,sizeof(stencilDesc));
+	stencilDesc.Format = Sys_ConvertTextureFormat(view.stencilTexture->format);
+	stencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	stencilDesc.Texture2D.MipSlice = 0;
+	HR(win32.pDevice->CreateDepthStencilView(view.stencilTexture->texture.res,&stencilDesc,&view.res.stencil));
 
 }
 
@@ -282,10 +319,10 @@ void Sys_convertViewPort(const viewport &view, D3D11_VIEWPORT &dxView) {
 void Sys_SetandClearView(const renderView &view) {
 	D3D11_VIEWPORT viewPort;
 	Sys_convertViewPort(view.view,viewPort);
-	win32.pContext->RSSetViewports(1,&viewPort);
 	win32.pContext->OMSetRenderTargets(1,&view.res.target,view.res.stencil);
+	win32.pContext->RSSetViewports(1,&viewPort);
 	win32.pContext->ClearRenderTargetView(view.res.target,glm::value_ptr(view.clearColor));
-	win32.pContext->ClearDepthStencilView(view.res.stencil, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
+	win32.pContext->ClearDepthStencilView(view.res.stencil, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 bool Sys_CreateBuffer(Buffer* buffer,void* data) {
@@ -302,7 +339,7 @@ bool Sys_CreateBuffer(Buffer* buffer,void* data) {
 }
 
 void Sys_Log_Shader_Errors(ID3D10Blob *errors,const SiString& shaderName) {
-	LogLine(shaderName + "failed to Compile",Logging::LOG_ERROR);
+	LogLine(shaderName + " failed to Compile",Logging::LOG_ERROR);
 	char* errorMsg = static_cast<char*>(errors->GetBufferPointer());
 	size_t bufSize = errors->GetBufferSize();
 	LogLine(errorMsg,Logging::LOG_ERROR);
@@ -414,6 +451,7 @@ bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout) {
 		LogLine("Unable to create vertex input layout",Logging::LOG_ERROR);
 			return false;
 	}
+	byteCode->Release();
 	return true;
 }
 

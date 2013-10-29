@@ -23,9 +23,11 @@ public:
 					loader.m_data.hidden = false;
 					loader.m_data.pos = vec3(0.0,0.0,0.0);
 					loader.m_data.rot = vec4(1.0,0.0,0.0,1.0);
+					loader.m_data.state = entity::STATE_OK;
 					return loader.m_data;
 				} else {
-					LogLine("Failed to load Resource",Logging::LOG_ERROR);
+					Log("Failed to load Resource: ",Logging::LOG_ERROR);
+					LogLine(filename,Logging::LOG_ERROR);
 					return entity();
 				}
 		}
