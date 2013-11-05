@@ -16,6 +16,13 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 			LogLine("Close message received",Logging::LOG_INFO);
 			common->Quit();
 			break;
+
+		case WM_SYSKEYDOWN:
+		case WM_KEYDOWN:
+			break;
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+			break;
 		default:
 			//LogLine("Unknown Window message",Logging::LOG_ERROR);
 			break;

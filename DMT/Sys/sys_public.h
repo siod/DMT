@@ -9,6 +9,12 @@ typedef struct {
 	ID3D11Device* pDevice;
 	ID3D11DeviceContext* pContext;
 	IDXGISwapChain*  pSwapChain;
+
+	LPDIRECTINPUT8			pDI;
+	LPDIRECTINPUTDEVICE8	pMouse;
+	LPDIRECTINPUTDEVICE8	pKeyboard;
+
+
 	bool windowRegistered;
 
 } win_info_t;

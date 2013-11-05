@@ -18,6 +18,7 @@
     <ClCompile Include="renderer\model.cpp" />
     <ClCompile Include="renderer\renderer.cpp" />
     <ClCompile Include="sys\sys_graphics.cpp" />
+    <ClCompile Include="Sys\win_input.cpp" />
     <ClCompile Include="Sys\win_main.cpp" />
     <ClCompile Include="sys\win_wndproc.cpp" />
   </ItemGroup>
@@ -32,7 +33,6 @@
     <ClInclude Include="Framework\typedefs.h" />
     <ClInclude Include="glm\glm\glm.hpp" />
     <ClInclude Include="input\input.h" />
-    <ClInclude Include="input\win_input.h" />
     <ClInclude Include="renderer\Material.h" />
     <ClInclude Include="renderer\model.h" />
     <ClInclude Include="renderer\renderer.h" />
@@ -44,6 +44,7 @@
     <ClInclude Include="renderer\vertexBuff.h" />
     <ClInclude Include="sys\sys_graphics.h" />
     <ClInclude Include="Sys\sys_public.h" />
+    <ClInclude Include="Sys\sys_input.h" />
     <ClInclude Include="sys\win_local.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

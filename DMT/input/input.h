@@ -1,8 +1,10 @@
 
 
+#ifndef __DMT_INPUT__
+#define __DMT_INPUT__
+#include "..\Sys\sys_input.h"
 #if defined _WIN32
-#include "win_input.h"
-	typedef Win_input Base_input;
+	//typedef Win_input Base_input;
 #else
 
 #endif
@@ -15,3 +17,4 @@ public:
 
 
 };
+#endif
