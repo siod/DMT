@@ -4,6 +4,7 @@
 
 class Renderer;
 class Resource_manager;
+class Input;
 class Common {
 public:
 	Common():m_renderer(NULL),m_resources(NULL),m_running(false) {}
@@ -18,6 +19,7 @@ public:
 
 	Renderer* m_renderer;
 	Resource_manager* m_resources;
+	Input* m_input;
 	bool m_running;
 
 };

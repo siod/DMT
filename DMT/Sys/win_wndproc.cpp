@@ -1,6 +1,7 @@
 #include "..\sys\win_local.h"
 #include "..\framework\Common.h"
 #include "..\..\..\c++\SiLib\SiLog\logging.h"
+#include "sys_input.h"
 
 #ifndef Log
 #define Log Logging::Log
@@ -17,6 +18,17 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 			common->Quit();
 			break;
 
+		case WM_ACTIVATE: {
+			int active;
+			bool minimized;
+			active = LOWORD(wParam);
+			minimized = HIWORD(wParam);
+			bool isActive = (active != WA_INACTIVE);
+			if (isActive) {
+				Sys_InputMouseLost();
+			}
+			break;
+		  }
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 			break;

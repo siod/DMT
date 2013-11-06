@@ -2,6 +2,7 @@
 #define _SYS_PUBLIC_H
 #include <windows.h>
 #include <D3D11.h>
+#include <dinput.h>
 
 typedef struct {
 	HWND hWnd;
@@ -13,6 +14,8 @@ typedef struct {
 	LPDIRECTINPUT8			pDI;
 	LPDIRECTINPUTDEVICE8	pMouse;
 	LPDIRECTINPUTDEVICE8	pKeyboard;
+	bool bMouseGrabbed;
+	bool bGrabMouse;
 
 
 	bool windowRegistered;

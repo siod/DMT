@@ -4,6 +4,7 @@
 #include "..\sys\sys_public.h"
 #include "..\renderer\renderer.h"
 #include "resource_manager.h"
+#include "..\input\input.h"
 #pragma comment(lib, "SiConf.lib")
 #pragma comment(lib, "SiLog.lib")
 
@@ -22,6 +23,7 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 	m_resources->init();
 	m_renderer = new Renderer();
 	m_renderer->init();
+	m_input->init();
 	entity* teapot = m_resources->loadEntity("..\\resources\\teapot.obj");
 	if (teapot) {
 		m_renderer->m_queue.push_back(teapot);
@@ -33,6 +35,7 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 
 void Common::mainLoop() {
 	float ftime(0.0f);
+	m_input->frame();
 	m_renderer->frame();
 }
 

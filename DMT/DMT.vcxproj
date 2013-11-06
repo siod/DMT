@@ -14,6 +14,7 @@
     <ClCompile Include="framework\Common.cpp" />
     <ClCompile Include="Framework\loaders\loader_OBJ.cpp" />
     <ClCompile Include="framework\resource_manager.cpp" />
+    <ClCompile Include="input\input.cpp" />
     <ClCompile Include="renderer\material.cpp" />
     <ClCompile Include="renderer\model.cpp" />
     <ClCompile Include="renderer\renderer.cpp" />

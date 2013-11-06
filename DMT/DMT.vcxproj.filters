@@ -48,12 +48,15 @@
     <ClCompile Include="renderer\material.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Sys\win_input.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="input\input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input\input.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="input\win_input.h">
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="Sys\sys_public.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="renderer\types.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Sys\sys_input.h">
+      <Filter>Sys</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
