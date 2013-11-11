@@ -20,14 +20,6 @@ extern win_info_t win32;
 
 LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
-#pragma comment( lib, "dxerr.lib" )
-#pragma comment( lib, "dxguid.lib" )
-#pragma comment( lib, "d3d11.lib" )
-#if defined(DEBUG) | defined(_DEBUG)
-#pragma comment( lib, "d3dx11d.lib" )
-#else
-#pragma comment( lib, "d3dx11.lib" )
-#endif
 #if defined(DEBUG) | defined(_DEBUG)
 	#ifndef HR
 	#define HR(x)                                              \

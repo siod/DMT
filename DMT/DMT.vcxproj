@@ -18,6 +18,7 @@
     <ClCompile Include="renderer\material.cpp" />
     <ClCompile Include="renderer\model.cpp" />
     <ClCompile Include="renderer\renderer.cpp" />
+    <ClCompile Include="Sys\lib_include.cpp" />
     <ClCompile Include="sys\sys_graphics.cpp" />
     <ClCompile Include="Sys\win_input.cpp" />
     <ClCompile Include="Sys\win_main.cpp" />

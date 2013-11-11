@@ -16,7 +16,10 @@ typedef struct {
 	LPDIRECTINPUTDEVICE8	pKeyboard;
 	bool bMouseGrabbed;
 	bool bGrabMouse;
-
+	bool bControllerGrabbed;
+	bool bGrabController;
+	unsigned int numControllers;
+	unsigned int controllers[4];
 
 	bool windowRegistered;
 

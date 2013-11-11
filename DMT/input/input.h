@@ -8,6 +8,10 @@
 
 #endif
 
+struct input_vibration {
+	unsigned short l;
+	unsigned short r;
+};
 class Input {
 
 public:

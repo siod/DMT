@@ -1,11 +1,12 @@
 #include <D3D11.h>
 #include <D3DX11tex.h>
 #include <DxErr.h>
+#include <XInput.h>
 #include "sys_input.h";
+#include "..\input\input.h"
 #include "..\Sys\sys_public.h"
 #include "..\..\..\c++\SiLib\SiLog\logging.h"
 
-#pragma comment(lib, "dinput8.lib")
 
 extern win_info_t win32;
 #define DI_BUFFER_SIZE 128
@@ -50,9 +51,34 @@ bool Sys_InputInitKeyboard() {
 
 }
 
+void Sys_InputEnableController() {
+	XInputEnable(true);
+}
+void Sys_InputDisableController() {
+	XInputEnable(false);
+}
+
 bool Sys_InputInitController() {
-
-
+	Sys_InputEnableController();
+	unsigned int numControllers = 0;
+	unsigned int controllers[4] = {0,0,0,0};
+	XINPUT_STATE state;
+	for (int i(0);i < XUSER_MAX_COUNT; ++i) {
+		ZeroMemory(&state,sizeof(XINPUT_STATE));
+		int result(XInputGetState(i,&state));
+		if (result == ERROR_SUCCESS) {
+			controllers[numControllers++] = i;
+		}
+	}
+	if (numControllers == 0) {
+		Log("Didn't detect any controllers\n",Logging::LOG_INFO); 
+		return false;
+	}
+	win32.numControllers = numControllers;
+	Log("Detected ",Logging::LOG_INFO); 
+	Log(std::to_string(numControllers),Logging::LOG_INFO);
+	Log(" Controllers\n",Logging::LOG_INFO);
+	memcpy(&win32.controllers,&controllers,sizeof(unsigned int)*4);
 	return true;
 }
 
@@ -88,6 +114,7 @@ bool Sys_InputInitMouse() {
 		return false;
 	}
 	Sys_InputCaptureMouse();
+	win32.bMouseGrabbed = true;
 	LogLine("Mouse input setup successfully",Logging::LOG_INFO);
 	return true;
 }
@@ -112,8 +139,15 @@ void Sys_InputSetCaptureMouse(bool grab) {
 	win32.bGrabMouse = grab;
 }
 
-void Sys_InputMouseLost() {
+void Sys_InputLost() {
 	win32.bMouseGrabbed = false;
+	win32.bControllerGrabbed = false;
+	//Disable when engine isn't active
+	Sys_InputDisableController();
+}
+
+void Sys_InputGained() {
+	Sys_InputEnableController();
 }
 
 void Sys_InputCaptureMouse() {
@@ -133,6 +167,12 @@ void Sys_InputFrame() {
 		Sys_InputCaptureMouse();
 		win32.bMouseGrabbed = win32.bGrabMouse;
 	}
+	/*
+	if (win32.bControllerGrabbed != win32.bGrabController) {
+		Sys_InputEnableController();
+		win32.bControllerGrabbed = win32.bGrabController;
+	}
+	*/
 }
 
 bool Sys_InputInit() {
@@ -143,10 +183,17 @@ bool Sys_InputInit() {
 	win32.bMouseGrabbed = false;
 	Sys_InputInitMouse();
 	Sys_InputInitKeyboard();
-
+	Sys_InputInitController();
 
 	return true;
 }
-void Sys_PollInput() {
+void Sys_InputPoll() {
 
+}
+
+void Sys_InputSetRumble(unsigned int which,input_vibration* data) {
+	XINPUT_VIBRATION winData;
+	winData.wLeftMotorSpeed = data->l;
+	winData.wRightMotorSpeed = data->r;
+	XInputSetState(which,&winData);
 }

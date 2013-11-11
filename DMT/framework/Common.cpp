@@ -5,8 +5,6 @@
 #include "..\renderer\renderer.h"
 #include "resource_manager.h"
 #include "..\input\input.h"
-#pragma comment(lib, "SiConf.lib")
-#pragma comment(lib, "SiLog.lib")
 
 Common com;
 Common * common = &com;

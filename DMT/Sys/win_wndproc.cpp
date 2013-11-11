@@ -25,7 +25,9 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 			minimized = HIWORD(wParam);
 			bool isActive = (active != WA_INACTIVE);
 			if (isActive) {
-				Sys_InputMouseLost();
+				Sys_InputGained();
+			} else {
+				Sys_InputLost();
 			}
 			break;
 		  }

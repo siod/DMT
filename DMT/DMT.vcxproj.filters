@@ -54,6 +54,9 @@
     <ClCompile Include="input\input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Sys\lib_include.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input\input.h">
