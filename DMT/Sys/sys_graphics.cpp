@@ -18,7 +18,7 @@ extern win_info_t win32;
 #define DMT_WINDOW_CLASS_NAME L"DMT"
 #define DMT_NAME L"DMT v0.1a"
 
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 #if defined(DEBUG) | defined(_DEBUG)
 	#ifndef HR

@@ -9,7 +9,7 @@
 #endif
 
 extern Common* common;
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
+LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 	//TODO
 	//Manages windows message events
 	switch (uMsg) {
