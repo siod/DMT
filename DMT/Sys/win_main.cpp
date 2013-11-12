@@ -18,19 +18,20 @@ extern Common* common;
 win_info_t win32;
 extern Common* common;
 void Sys_PumpEvents() {
-	while (common->Running()) {
+	while (true) {
 		MSG msg;
 		while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
 			if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
 				// Quit msg received
 				common->Quit();
-				Log("Shutting down\n",Logging::LOG_DEBUG);
 				return;
 			}
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		if (!common->Running())
+			return;
 		common->mainLoop();
 
 	}
@@ -55,8 +56,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	common->init(0,0,cmdLine);
 	LogLine("DMTv1.0a",Logging::LOG_DEBUG);
+	common->init(0,0,cmdLine);
 	Sys_PumpEvents();
 	Logging::destroy();
 	std::cin.get();

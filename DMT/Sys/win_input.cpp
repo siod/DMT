@@ -187,8 +187,69 @@ bool Sys_InputInit() {
 
 	return true;
 }
-void Sys_InputPoll() {
+static DIDEVICEOBJECTDATA input_buffer[DI_BUFFER_SIZE];
+unsigned int Sys_InputPollKeyboard() {
+	DWORD numElements(DI_BUFFER_SIZE);
+	HRESULT result;
 
+	if (!win32.pKeyboard) {
+		Log("No keyboard found\n",Logging::LOG_ERROR);
+		return 0;
+	}
+	result = win32.pKeyboard->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),input_buffer,&numElements,0);
+
+	if (result != DI_OK) {
+		if (result == DI_BUFFEROVERFLOW) {
+			Log("Bufferoverflow in PollKeyboard\n",Logging::LOG_ERROR);
+		}
+		// Keyboard is lost when the window loses focus, try reacquiring it
+		result = win32.pKeyboard->Acquire();
+
+		if (!FAILED(result)) {
+			// clears the buffer
+			win32.pKeyboard->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),NULL,&numElements,0);
+			numElements = 0;
+		}
+	}
+
+	if (FAILED(result)) {
+		return 0;
+	}
+
+	return unsigned int(numElements);
+}
+
+unsigned int Sys_InputPollMouse() {
+	DWORD numElements(DI_BUFFER_SIZE);
+	HRESULT result;
+
+	if (!win32.pMouse  || !win32.bMouseGrabbed) {
+		Log("Valid mouse not found\n",Logging::LOG_ERROR);
+		return 0;
+	}
+	result = win32.pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),input_buffer,&numElements,0);
+
+	if (result != DI_OK) {
+		if (result == DI_BUFFEROVERFLOW) {
+			Log("Bufferoverflow in PollMouse\n",Logging::LOG_ERROR);
+		}
+		// Mouse is lost when the window loses focus, try reacquiring it
+		result = win32.pMouse->Acquire();
+
+		if (!FAILED(result)) {
+			// clears the buffer
+			win32.pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),NULL,&numElements,0);
+			numElements = 0;
+		}
+	}
+
+	if (FAILED(result)) {
+		return 0;
+	}
+
+	return unsigned int(numElements);
+}
+void Sys_InputPoll() {
 }
 
 void Sys_InputSetRumble(unsigned int which,input_vibration* data) {
