@@ -1,0 +1,72 @@
+{
+	 "textures" : [
+
+	 ],
+	 "shaders" : [
+		{
+			"guid" : 3,
+			"name" : "basic vertex",
+			"type" : "vertex",
+			"file" : "color.vs",
+			"functionName" : "ColorVertexShader"
+		},
+		{
+			"guid" : 4,
+			"name" : "basic pixel",
+			"file" : "color.ps",
+			"functionName" : "ColorPixelShader"
+		}
+	 ],
+	 "materials" : [
+		{
+			"guid" : 5,
+			"name" : "basic material",
+			"vertexShaders" : [
+				3
+			],
+			"pixelShaders" : [
+				4
+			],
+			"textures" : []
+		}
+
+	 ],
+	 "entities" : [
+		{
+			"guid" : 2,
+			"type" : "staticObj",
+			"format" : "OBJ",
+			"file" : "teapot.obj",
+			"Name" : "Utah Teapot",
+			"pos" : {
+				"x" : 0.0,
+				"y" : 0.0,
+				"z" : 10.0
+			},
+			"rot" : {
+				"x" : 0.0,
+				"y" : 0.0,
+				"z" : 0.0
+			},
+			"materials" : [
+				5
+			]
+		}
+
+	 ],
+	 "levels" : [
+		{
+			"guid" : 1,
+			"name": "dev",
+			"startloc" : {
+					"x" : 0.0,
+					"y" : 0.0,
+					"z" : 0.0
+				},
+			"name": "dev test level",
+			"entities": [
+				2
+				]
+		}
+	 ]
+}
