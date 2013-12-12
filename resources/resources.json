@@ -63,10 +63,11 @@
 					"y" : 0.0,
 					"z" : 0.0
 				},
-			"name": "dev test level",
+			"friendlyName": "dev test level",
 			"entities": [
 				2
 				]
 		}
-	 ]
+	 ],
+	 "startlevel": 1
 }

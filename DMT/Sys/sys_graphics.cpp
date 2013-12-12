@@ -226,6 +226,9 @@ DXGI_FORMAT Sys_ConvertTextureFormat(const int engineFormat) {
 			return DXGI_FORMAT_R8G8B8A8_UNORM;
 		case 3:
 			return DXGI_FORMAT_R32_UINT;
+		default:
+			Log("Invalid call to ConvertTextureFormat\n",Logging::LOG_ERROR);
+			return DXGI_FORMAT_R32G32B32A32_FLOAT;
 	}
 }
 
@@ -394,7 +397,7 @@ bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout) {
 			break;
 		default:
 			LogLine("Uknown shader type",Logging::LOG_ERROR);
-			break;
+			return false;
 	}
 	if (FAILED(result)) {
 		LogLine("Unable to create shader " + shader->m_FileName,Logging::LOG_ERROR);

@@ -1,8 +1,8 @@
 
 #ifndef _SI_RENDERBUFFER_
 #define _SI_RENDERBUFFER_
-extern Sys_Layout_t;
-extern Sys_Buff_t;
+Sys_Layout_t;
+Sys_Buff_t;
 struct Buffer {
 	enum BUF_TYPE {
 		VERTEX,

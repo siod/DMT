@@ -10,9 +10,8 @@ public:
 		FAILED 
 	};
 	const SiString m_filename;
-	entity m_data;
 	STATUS m_status;
-	File_resource_loader(const char* filename):m_filename(filename),m_data(),m_status(UNLOADED) {}
+	File_resource_loader(const char* filename):m_filename(filename),m_status(UNLOADED) {}
 	virtual void load() {}
 	virtual ~File_resource_loader() {}
 

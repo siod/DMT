@@ -10,7 +10,7 @@ class Material {
 		const SiString& vertexShader_filename,const SiString& vertexShader_funcname)
 		:m_name(name), m_texName(), 
 		m_textures(), m_PS(NULL), m_VS(NULL),  m_numTextures(numTextures) {
-			for (int i(0); i < numTextures;++i) {
+			for (unsigned int i(0); i < numTextures;++i) {
 				m_texName[i] = textureNames[i];
 			}
 	}

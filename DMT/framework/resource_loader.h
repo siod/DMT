@@ -8,14 +8,15 @@ class Resource_loader {
 public:
 	enum R_TYPE
 	{
-		RESOURCE_OBJ
+		RESOURCE_OBJ,
+		RESOURCE_CONFIG
 	};
 
 	static entity Load(R_TYPE type, const char* filename) {
 		Log("Loading resource",Logging::LOG_INFO);
 		LogLine(filename,Logging::LOG_INFO);
 		switch (type) {
-			case RESOURCE_OBJ:
+			case RESOURCE_OBJ: {
 				loader_OBJ loader = loader_OBJ(filename);
 				loader.load();
 				if (loader.m_status == File_resource_loader::LOADED) {
@@ -30,9 +31,17 @@ public:
 					LogLine(filename,Logging::LOG_ERROR);
 					return entity();
 				}
+		   }
+			default:
+				LogLine("Unkown resource type",Logging::LOG_ERROR);
 		}
 		LogLine("Unsupported resource",Logging::LOG_ERROR);
 		return entity();
+	}
+
+	static bool LoadConfig(const char* filename) {
+
+
 	}
 
 private:

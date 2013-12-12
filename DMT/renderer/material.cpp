@@ -10,7 +10,7 @@ bool Material::init( const SiString& name,const SiString* textureNames,const uns
 					const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout) {
 	m_numTextures = numTextures;
 	m_name = name;
-	for (int i = 0; i < numTextures; i++) {
+	for (unsigned int i = 0; i < numTextures; i++) {
 		m_texName[i] = textureNames[i];
 	}
 	m_PS = common->m_resources->allocateShader(pixelShader_filename);

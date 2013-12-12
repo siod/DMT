@@ -69,7 +69,7 @@ void Sys_ShutdownGraphics();
 void Sys_SwapAndDisplay();
 void Sys_SetandClearView(const renderView &view);
 //bool Sys_CreateTexture();
-extern struct Texture;
+struct Texture;
 void Sys_ConvertTextureFormat(D3D11_TEXTURE2D_DESC &desc,const Texture& engineDesc);
 void Sys_CreateTexture(Texture &texture);
 void Sys_LoadTextureFromFile(Texture &texture,const SiString& filename);
@@ -80,7 +80,7 @@ bool Sys_CreateBuffer(Buffer* buffer,void* data);
 void Sys_CreateScreenBuffers(renderView &view);
 
 void Sys_ReleaseTexture(Sys_texture_t& texture);
-extern struct Shader;
+struct Shader;
 void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const size_t dSize,
 							   const unsigned int numBuffers, const unsigned int whichBuffer);
 bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout);

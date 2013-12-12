@@ -16,7 +16,7 @@
     <Filter Include="Framework\Loaders">
       <UniqueIdentifier>{cff5f771-f4f8-4228-ad5d-2d9bbb6d27c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="glm">
+    <Filter Include="Libs">
       <UniqueIdentifier>{48ae8955-76b5-407d-a0bd-0cafbb3e1f4e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -55,7 +55,10 @@
       <Filter>Sys</Filter>
     </ClCompile>
     <ClCompile Include="Framework\loaders\loader_OBJ.cpp">
-      <Filter>Framework</Filter>
+      <Filter>Framework\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\loaders\loader_CONFIG.cpp">
+      <Filter>Framework\Loaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,13 +123,22 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="glm\glm\glm.hpp">
-      <Filter>glm</Filter>
+      <Filter>Libs</Filter>
     </ClInclude>
     <ClInclude Include="renderer\types.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Sys\sys_input.h">
       <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\rapidjson.h">
+      <Filter>Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\loaders\loader_CONFIG.h">
+      <Filter>Framework\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\file.h">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

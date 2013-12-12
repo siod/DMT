@@ -5,7 +5,7 @@
 #include "..\framework\math.h"
 #include "Material.h"
 #include "types.h"
-extern struct Buffer;
+struct Buffer;
 class renderModel {
 	bool renderModel::loadMeshRaw(void* vertexBuffer,size_t primSize,size_t length,std::vector<unsigned int>& indexBuffer,BUFFER_LAYOUT format);
 public:
