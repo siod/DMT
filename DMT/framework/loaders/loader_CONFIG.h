@@ -13,6 +13,8 @@ private:
 
 	void loadMaterials(configdata& materials) ;
 
+	void loadModels(configdata& models);
+
 	void loadEntities(configdata& entities);
 
 	void loadShaders(configdata& shaders) ;
@@ -21,4 +23,6 @@ private:
 
 	void loadLevels(configdata& levels) ;
 
+	void loader_CONFIG::loadVec3(vec3 &vec, configdata& vector);
+	void loader_CONFIG::loadVec4(vec4 &vec, configdata& vector);
 };

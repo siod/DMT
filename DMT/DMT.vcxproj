@@ -37,6 +37,7 @@
     <ClInclude Include="framework\Common.h" />
     <ClInclude Include="framework\entity.h" />
     <ClInclude Include="framework\file.h" />
+    <ClInclude Include="framework\level.h" />
     <ClInclude Include="Framework\loaders\loader.h" />
     <ClInclude Include="framework\loaders\loader_CONFIG.h" />
     <ClInclude Include="Framework\loaders\loader_OBJ.h" />

@@ -31,13 +31,21 @@
 		}
 
 	 ],
+	 "models" : [
+		{
+			 "guid" : 6,
+			 "format" : "OBJ",
+			 "file" : "teapot.obj",
+			"materials" : [
+				5
+			]
+		}
+	 ],
 	 "entities" : [
 		{
 			"guid" : 2,
 			"type" : "staticObj",
-			"format" : "OBJ",
-			"file" : "teapot.obj",
-			"Name" : "Utah Teapot",
+			"name" : "Utah Teapot",
 			"pos" : {
 				"x" : 0.0,
 				"y" : 0.0,
@@ -47,10 +55,7 @@
 				"x" : 0.0,
 				"y" : 0.0,
 				"z" : 0.0
-			},
-			"materials" : [
-				5
-			]
+			}
 		}
 
 	 ],

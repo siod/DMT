@@ -11,14 +11,16 @@ public:
 	};
 
 
-	entity():model(),state(STATE_ERROR),hidden(true),pos(0.0f,0.0f,0.0f),rot(0.0f,0.0f,0.0f,0.0f) {}
+	entity():id(0),model(),state(STATE_ERROR),hidden(true),pos(0.0f,0.0f,0.0f),rot(0.0f,0.0f,0.0f,0.0f),name("") {}
 
 
+	guid id;
 	renderModel model;
 	STATE state;
 	bool	hidden;
 	vec3 pos;
 	vec4 rot;
+	SiString name;
 
 };
 #endif

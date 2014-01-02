@@ -140,5 +140,8 @@
     <ClInclude Include="framework\file.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="framework\level.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

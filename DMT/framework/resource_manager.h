@@ -4,14 +4,17 @@
 #include "..\renderer\Shader.h"
 #include "..\renderer\Material.h"
 #include "entity.h"
+#include "level.h"
 
 class Resource_manager {
 
 typedef std::unordered_map<SiString,Shader> shaderCache;
 typedef std::unordered_map<SiString,Material> materialCache;
-typedef std::unordered_map<SiString,entity> enityCache;
+typedef std::unordered_map<SiString,renderModel> modelCache;
+typedef std::unordered_map<SiString,entity> entityCache;
+typedef std::unordered_map<SiString,Level> levelCache;
 public:
-	Resource_manager():textures(),shaders(),materials(),entities() {}
+	Resource_manager():textures(),shaders(),materials(),entities(),models() {}
 
 	void init();
 	entity* loadEntity(const char* name);
@@ -20,21 +23,29 @@ public:
 		textures.allocateTexture(name,newTexture);
 	}
 
-	Material* allocateMaterial(const SiString& name) {
-		if (materials.find(name) != materials.end()) {
-			return &materials[name];
+	template<typename T> static T* allocate(std::unordered_map<SiString,T>& cache,
+											const SiString& name) {
+		if (cache.find(name) != cache.end()) {
+			return &cache[name];
 		}
-		Material newMaterial;
-		materials[name] = newMaterial;
-		return &materials[name];
+		T newRes;
+		cache[name] = newRes;
+		return &cache[name];
+	}
+
+	Material* allocateMaterial(const SiString& name) {
+		return allocate(materials,name);
 	}
 	Shader* allocateShader(const SiString& name) {
-		if (shaders.find(name) != shaders.end()) {
-			return &shaders[name];
-		}
-		Shader newShader;
-		shaders[name] = newShader;
-		return &shaders[name];
+		return allocate(shaders,name);
+	}
+
+	Level* allocateLevel(const SiString& name) {
+		return allocate(levels,name);
+	}
+
+	renderModel* allocateModel(const SiString& name) {
+		return allocate(models,name);
 	}
 
 	entity* addEntity(const SiString& name,const entity & ent) {
@@ -62,6 +73,8 @@ public:
 	TextureManager textures;
 	shaderCache shaders;
 	materialCache materials;
-	enityCache entities;
+	entityCache entities;
+	levelCache levels;
+	modelCache models;
 
 };
