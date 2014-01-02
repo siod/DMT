@@ -47,6 +47,7 @@ void loader_CONFIG::loadEntities(configdata& entities) {
 		loadVec3(newEntity.pos,entities[i]["pos"]);
 		loadVec4(newEntity.rot,entities[i]["rot"]);
 		newEntity.name = entities[i]["name"].GetString();
+
 	}
 }
 

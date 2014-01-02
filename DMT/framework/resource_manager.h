@@ -8,29 +8,36 @@
 
 class Resource_manager {
 
-typedef std::unordered_map<SiString,Shader> shaderCache;
-typedef std::unordered_map<SiString,Material> materialCache;
-typedef std::unordered_map<SiString,renderModel> modelCache;
-typedef std::unordered_map<SiString,entity> entityCache;
-typedef std::unordered_map<SiString,Level> levelCache;
+typedef std::unordered_map<guid,Shader> shaderCache;
+typedef std::unordered_map<guid,Material> materialCache;
+typedef std::unordered_map<guid,renderModel> modelCache;
+typedef std::unordered_map<guid,entity> entityCache;
+typedef std::unordered_map<guid,Level> levelCache;
+typedef std::unordered_map<SiString,guid> guidCache;
 public:
-	Resource_manager():textures(),shaders(),materials(),entities(),models() {}
+	Resource_manager():textures(),shaders(),materials(),entities(),models(),guids() {}
 
 	void init();
 	entity* loadEntity(const char* name);
 
-	void allocateTexture(const SiString& name,Texture &newTexture) {
-		textures.allocateTexture(name,newTexture);
+
+	guid lookupGUID(const SiString& name) {
+		return guids[name];
 	}
 
-	template<typename T> static T* allocate(std::unordered_map<SiString,T>& cache,
-											const SiString& name) {
-		if (cache.find(name) != cache.end()) {
-			return &cache[name];
+	template<typename T> static T* allocate(std::unordered_map<guid,T>& cache,
+											const guid id) {
+		if (cache.find(id) != cache.end()) {
+			return &cache[id];
 		}
 		T newRes;
-		cache[name] = newRes;
-		return &cache[name];
+		cache[id] = newRes;
+		return &cache[id];
+	}
+
+	template<typename T> T* allocate(std::unordered_map<guid,T>& cache,
+											const SiString& name) {
+		return allocate(cache,lookupGUID(name));
 	}
 
 	Material* allocateMaterial(const SiString& name) {
@@ -52,13 +59,17 @@ public:
 		if (ent.state == entity::STATE_ERROR) {
 			return NULL;
 		}
-		if (entities.find(name) != entities.end()) {
-			return &entities[name];
+		guid id = lookupGUID(name);
+		if (entities.find(id) != entities.end()) {
+			return &entities[id];
 		}
-		entities[name] = ent;
-		return &entities[name];
+		entities[id] = ent;
+		return &entities[id];
 	}
 
+	void allocateTexture(const SiString& name,Texture &newTexture) {
+		textures.allocateTexture(name,newTexture);
+	}
 
 	/*
 	Texture* loadTextureFromFile(const SiString& name,const int format) {
@@ -76,5 +87,6 @@ public:
 	entityCache entities;
 	levelCache levels;
 	modelCache models;
+	guidCache guids;
 
 };

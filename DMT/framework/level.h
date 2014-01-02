@@ -13,7 +13,7 @@ public:
 	};
 
 
-	Level():m_id(id),state(STATE_ERROR),startPos(0.0f,0.0f,0.0f),
+	Level():m_id(0),state(STATE_ERROR),startPos(0.0f,0.0f,0.0f),
 		name("INVALID"),friendlyName("unloaded level"),entites() {}
 
 
