@@ -13,11 +13,11 @@ public:
 	};
 
 
-	Level():m_id(0),state(STATE_ERROR),startPos(0.0f,0.0f,0.0f),
+	Level():id(0),state(STATE_ERROR),startPos(0.0f,0.0f,0.0f),
 		name("INVALID"),friendlyName("unloaded level"),entites() {}
 
 
-	guid m_id;
+	guid id;
 	STATE state;
 	vec3 startPos;
 	SiString name;

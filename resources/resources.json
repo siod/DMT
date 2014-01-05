@@ -7,7 +7,7 @@
 			"guid" : 3,
 			"name" : "basic vertex",
 			"type" : "vertex",
-			"file" : "color.vs",
+			"filename" : "color.vs",
 			"functionName" : "ColorVertexShader"
 		},
 		{
@@ -21,12 +21,8 @@
 		{
 			"guid" : 5,
 			"name" : "basic material",
-			"vertexShaders" : [
-				3
-			],
-			"pixelShaders" : [
-				4
-			],
+			"vertexShader" : 3,
+			"pixelShaders" : 4,
 			"textures" : []
 		}
 
@@ -34,7 +30,8 @@
 	 "models" : [
 		{
 			 "guid" : 6,
-			 "format" : "OBJ",
+			 "name" :"Teapot",
+			 "fileformat" : "OBJ",
 			 "file" : "teapot.obj",
 			"materials" : [
 				5
@@ -55,7 +52,9 @@
 				"x" : 0.0,
 				"y" : 0.0,
 				"z" : 0.0
-			}
+			},
+			"hidden" : false,
+			"model" : 6
 		}
 
 	 ],

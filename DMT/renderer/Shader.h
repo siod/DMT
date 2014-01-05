@@ -15,6 +15,8 @@ struct Shader {
 		Sys_PS_t ps;
 		Sys_VS_t vs;
 	};
+	guid id;
+	SiString name; 
 	Sys_Layout_t layout;
 	BUFFER_LAYOUT m_layout;
 	SiString m_FuncName;

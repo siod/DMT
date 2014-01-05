@@ -20,6 +20,9 @@ public:
 	};
 
 	renderModel():points(),indices(),material(NULL),status(INACTIVE) {}
+	static MODEL_FILE_TYPE convertToFType(const SiString& type) {
+		return MODEL_OBJ;
+	}
 
 	template<typename T>
 	bool loadMesh(std::vector<T>& verts,std::vector<unsigned int>&indices,BUFFER_LAYOUT format) {
@@ -30,6 +33,10 @@ public:
 		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
 		const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout);
 
+	guid id;
+	SiString filename;
+	SiString name;
+	MODEL_FILE_TYPE fileFormat;
 	struct Buffer* points;
 	struct Buffer* indices;
 	//VertBuff* normals; No vertex based normal maps

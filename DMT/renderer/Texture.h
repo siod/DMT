@@ -17,5 +17,8 @@ struct Texture {
 	unsigned int bindFlags;
 	sampling_info sampling;
 	bool cpu_writable;
+	guid id;
+	SiString name;
+	SiString filename;
 };
 #endif

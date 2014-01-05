@@ -4,6 +4,7 @@
 #include "loaders\loader.h"
 #include "loaders\loader_OBJ.h"
 #include "..\..\..\c++\SiLib\SiLog\logging.h"
+#include "..\renderer\model.h"
 #include <map>
 class Resource_loader {
 public:
@@ -12,6 +13,7 @@ public:
 		RESOURCE_OBJ,
 		RESOURCE_CONFIG
 	};
+
 
 	static R_TYPE getType(const SiString& sType) {
 		return RESOURCE_OBJ;

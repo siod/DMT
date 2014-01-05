@@ -31,6 +31,7 @@ public:
 			return &cache[id];
 		}
 		T newRes;
+		newRes.id = id;
 		cache[id] = newRes;
 		return &cache[id];
 	}
@@ -38,6 +39,21 @@ public:
 	template<typename T> T* allocate(std::unordered_map<guid,T>& cache,
 											const SiString& name) {
 		return allocate(cache,lookupGUID(name));
+	}
+
+	Material* allocateMaterial(const guid id) {
+		return allocate(materials,id);
+	}
+	Shader* allocateShader(const guid id) {
+		return allocate(shaders,id);
+	}
+
+	Level* allocateLevel(const guid id) {
+		return allocate(levels,id);
+	}
+
+	renderModel* allocateModel(const guid id) {
+		return allocate(models,id);
 	}
 
 	Material* allocateMaterial(const SiString& name) {
@@ -55,6 +71,10 @@ public:
 		return allocate(models,name);
 	}
 
+	Texture* allocateTexture(const SiString& name,Texture &newTexture) {
+		textures.allocateTexture(name,newTexture);
+	}
+
 	entity* addEntity(const SiString& name,const entity & ent) {
 		if (ent.state == entity::STATE_ERROR) {
 			return NULL;
@@ -67,9 +87,6 @@ public:
 		return &entities[id];
 	}
 
-	void allocateTexture(const SiString& name,Texture &newTexture) {
-		textures.allocateTexture(name,newTexture);
-	}
 
 	/*
 	Texture* loadTextureFromFile(const SiString& name,const int format) {

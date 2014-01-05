@@ -28,18 +28,31 @@ class TextureManager {
 			}
 		}
 
-		void allocateTexture(const guid id,Texture &newTexture) {
+		Texture* allocateTexture(const guid id) {
 			if (textures.find(id) != textures.end()) {
 				return;
 			}
-			Sys_CreateTexture(newTexture);
+			Texture newTexture;
+			newTexture.id = id;
 			texture_info_t newTex_info;
-			newTex_info.count =1;
-			newTex_info.loaded = true;
+			newTex_info.count =0;
+			newTex_info.loaded = false;
+			newTex_info.texture = newTexture;
 			textures[id] = newTex_info;
 		}
-		void allocateTexture(const SiString& name,Texture &newTexture) {
-			allocateTexture(lookupGUID(name),newTexture);
+
+		void loadTexture(const guid id) {
+			if (!textures[id].loaded) {
+				Sys_CreateTexture(textures[id].texture);
+				textures[id].count = 1;
+				textures[id].loaded = true;
+			} else {
+				++textures[id].count;
+			}
+		}
+
+		Texture* allocateTexture(const SiString& name) {
+			allocateTexture(lookupGUID(name));
 		}
 
 		Texture* loadTextureFromFile(const SiString& name,const int format) {
@@ -70,8 +83,8 @@ class TextureManager {
 			if (--textures[id].count > 0)
 				return;
 
-			textures[id].loaded = false;
 			Sys_ReleaseTexture(textures[id].texture.texture);
+			textures[id].loaded = false;
 		}
 
 		void unloadTexture(const SiString& name) {
