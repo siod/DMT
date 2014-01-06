@@ -63,6 +63,9 @@ void loader_CONFIG::loadTextures(configdata& textures) {
 		Texture* texture = common->m_resources->allocateTexture(textures["id"].GetUint64());
 		texture->name = config["name"].GetString();
 		texture->filename = config["filename"].GetString();
+		if (config.HasMember("registername") && config["registername"].GetBool()) {
+			common->m_resources->addGUIDLookup(texture->name,texture->id);
+		}
 	}
 
 }
@@ -134,6 +137,7 @@ void loader_CONFIG::load() {
 		config.HasMember("materials") &&
 		config.HasMember("entities") &&
 		config.HasMember("levels") &&
+		config.HasMember("models") &&
 		config.HasMember("root"))) {
 			Log("malformed config file\n",Logging::LOG_ERROR);
 			m_status = FAILED;

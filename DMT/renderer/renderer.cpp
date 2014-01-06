@@ -36,7 +36,8 @@ void Renderer::init() {
 	screen.projection = (perspective(60.0f,aspect,1.0f,100.0f)*dx);
 	screen.viewMat = (glm::lookAt(vec3(0,0,10),vec3(0,0,0),vec3(0.0f,1.0f,0.0f)));
 
-	screen.stencilTexture = new Texture();
+	//screen.stencilTexture = new Texture();
+	screen.stencilTexture = common->m_resources->allocateTexture("stencil");
 	screen.stencilTexture->format =1;
 	screen.stencilTexture->mipLevels = 1;
 	screen.stencilTexture->height = screenHeight;
@@ -45,7 +46,6 @@ void Renderer::init() {
 	screen.stencilTexture->bindFlags = 6;
 	screen.stencilTexture->cpu_writable = false;
 	//FIX
-	common->m_resources->textures.allocateTexture("stencil",*screen.stencilTexture);
 	Sys_CreateScreenBuffers(screen);
 	allocateView(screen);
 }

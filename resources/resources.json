@@ -1,6 +1,18 @@
 {
 	 "textures" : [
-
+		 {
+			 "id": 7,
+			 "name": "test texture",
+			 "fileformat" : "png",
+			 "filename" : "test.png"
+		 },
+		 {
+			 "id" : 8,
+			 "name" : "stencil",
+			 "fileformat" : "MEMORY",
+			 "filename" : "INVALID",
+			 "registername" : true
+		 }
 	 ],
 	 "shaders" : [
 		{

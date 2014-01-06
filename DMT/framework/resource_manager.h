@@ -25,6 +25,10 @@ public:
 		return guids[name];
 	}
 
+	void addGUIDLookup(const SiString& name, const guid id) {
+		guids[name] = id;
+	}
+
 	template<typename T> static T* allocate(std::unordered_map<guid,T>& cache,
 											const guid id) {
 		if (cache.find(id) != cache.end()) {
@@ -56,6 +60,10 @@ public:
 		return allocate(models,id);
 	}
 
+	Texture* allocateTexture(const guid id) {
+		return textures.allocateTexture(id);
+	}
+
 	Material* allocateMaterial(const SiString& name) {
 		return allocate(materials,name);
 	}
@@ -71,8 +79,8 @@ public:
 		return allocate(models,name);
 	}
 
-	Texture* allocateTexture(const SiString& name,Texture &newTexture) {
-		textures.allocateTexture(name,newTexture);
+	Texture* allocateTexture(const SiString& name) {
+		return textures.allocateTexture(name);
 	}
 
 	entity* addEntity(const SiString& name,const entity & ent) {

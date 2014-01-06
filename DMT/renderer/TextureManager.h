@@ -30,7 +30,7 @@ class TextureManager {
 
 		Texture* allocateTexture(const guid id) {
 			if (textures.find(id) != textures.end()) {
-				return;
+				return &textures[id].texture;
 			}
 			Texture newTexture;
 			newTexture.id = id;
@@ -39,6 +39,7 @@ class TextureManager {
 			newTex_info.loaded = false;
 			newTex_info.texture = newTexture;
 			textures[id] = newTex_info;
+			return &textures[id].texture;
 		}
 
 		void loadTexture(const guid id) {
@@ -52,7 +53,7 @@ class TextureManager {
 		}
 
 		Texture* allocateTexture(const SiString& name) {
-			allocateTexture(lookupGUID(name));
+			return allocateTexture(lookupGUID(name));
 		}
 
 		Texture* loadTextureFromFile(const SiString& name,const int format) {
