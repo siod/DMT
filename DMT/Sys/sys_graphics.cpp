@@ -389,10 +389,10 @@ bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout) {
 	HRESULT result;
 	switch (shader->type) {
 
-		case Shader::S_VERTEX:
+		case Shader::VERTEX:
 			result = win32.pDevice->CreateVertexShader(byteCode->GetBufferPointer(),byteCode->GetBufferSize(),NULL,&shader->vs.shader);
 			break;
-		case Shader::S_PIXEL:
+		case Shader::PIXEL:
 			result = win32.pDevice->CreatePixelShader(byteCode->GetBufferPointer(),byteCode->GetBufferSize(),NULL,&shader->ps.shader);
 			break;
 		default:
@@ -403,7 +403,7 @@ bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout) {
 		LogLine("Unable to create shader " + shader->m_FileName,Logging::LOG_ERROR);
 		return false;
 	}
-	if (shader->type == Shader::S_PIXEL)
+	if (shader->type == Shader::PIXEL)
 		return true;
 
 	D3D11_INPUT_ELEMENT_DESC layoutDesc[3];

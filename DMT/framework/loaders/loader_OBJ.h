@@ -4,9 +4,8 @@
 class loader_OBJ : public File_resource_loader {
 typedef  unsigned int INDEX_TYPE;
 public:
-	entity m_data;
 	loader_OBJ(const char* filename): File_resource_loader(filename) { }
-	virtual void load();
+	virtual void load(Buffer& vertex,Buffer& indices);
 	virtual ~loader_OBJ() {}
 private:
 	void addVertex(std::string& input,std::vector<vec3>& vec);

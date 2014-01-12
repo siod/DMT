@@ -1,3 +1,5 @@
+#ifndef _LOADER_CONFIG_
+#define _LOADER_CONFIG_
 #include "loader.h"
 #include <vector>
 #include "../../lib/rapidjson/include/rapidjson/document.h"
@@ -23,6 +25,9 @@ private:
 
 	void loadLevels(configdata& levels) ;
 
-	void loader_CONFIG::loadVec3(vec3 &vec, configdata& vector);
-	void loader_CONFIG::loadVec4(vec4 &vec, configdata& vector);
+	inline void loader_CONFIG::loadVec3(vec3 &vec, configdata& vector);
+	inline void loader_CONFIG::loadVec4(vec4 &vec, configdata& vector);
+	inline void loader_CONFIG::loadBuffer(Buffer &buff,configdata& buffer);
 };
+
+#endif

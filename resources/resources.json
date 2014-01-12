@@ -1,13 +1,13 @@
 {
 	 "textures" : [
 		 {
-			 "id": 7,
+			 "guid": 7,
 			 "name": "test texture",
 			 "fileformat" : "png",
 			 "filename" : "test.png"
 		 },
 		 {
-			 "id" : 8,
+			 "guid" : 8,
 			 "name" : "stencil",
 			 "fileformat" : "MEMORY",
 			 "filename" : "INVALID",
@@ -20,13 +20,24 @@
 			"name" : "basic vertex",
 			"type" : "vertex",
 			"filename" : "color.vs",
-			"functionName" : "ColorVertexShader"
+			"functionName" : "ColorVertexShader",
+			"registers" : [
+				{
+					"usage" : "dynamic",
+					"type" : "constant",
+					"size" : "",
+					"cpu_access" : "write",
+					"stride" : 0
+				}
+			]
 		},
 		{
 			"guid" : 4,
 			"name" : "basic pixel",
-			"file" : "color.ps",
-			"functionName" : "ColorPixelShader"
+			"type" : "pixel",
+			"filename" : "color.ps",
+			"functionName" : "ColorPixelShader",
+			"registers" : []
 		}
 	 ],
 	 "materials" : [
@@ -34,7 +45,7 @@
 			"guid" : 5,
 			"name" : "basic material",
 			"vertexShader" : 3,
-			"pixelShaders" : 4,
+			"pixelShader" : 4,
 			"textures" : []
 		}
 
@@ -63,7 +74,8 @@
 			"rot" : {
 				"x" : 0.0,
 				"y" : 0.0,
-				"z" : 0.0
+				"z" : 0.0,
+				"w" : 1.0
 			},
 			"hidden" : false,
 			"model" : 6
@@ -74,7 +86,7 @@
 		{
 			"guid" : 1,
 			"name": "dev",
-			"startloc" : {
+			"startLoc" : {
 					"x" : 0.0,
 					"y" : 0.0,
 					"z" : 0.0
@@ -85,5 +97,7 @@
 				]
 		}
 	 ],
-	 "startlevel": 1
+	 "root" : {
+		"startLevel": 1
+	 }
 }

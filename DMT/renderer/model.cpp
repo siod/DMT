@@ -2,10 +2,12 @@
 #include "vertexBuff.h"
 #include "..\framework\resource_manager.h"
 #include "..\framework\Common.h"
+#include "..\framework\resource_loader.h"
 extern Common* common;
 bool Sys_CreateBuffer(Buffer* buffer,void* data);
 
 bool renderModel::loadMeshRaw(void* vertexBuffer,size_t primSize,size_t length,std::vector<unsigned int>& indexBuffer,BUFFER_LAYOUT format) {
+	/*
 	Buffer* verts = new Buffer();
 	verts->cpu_access = Buffer::NONE;
 	verts->size = length;
@@ -16,7 +18,7 @@ bool renderModel::loadMeshRaw(void* vertexBuffer,size_t primSize,size_t length,s
 		delete verts;
 		return false;
 	}
-	points = verts;
+	//points = verts;
 
 	/* Disabling Index buffers, 
 	*will enable them with better support for deduplication of vertex data
@@ -40,4 +42,12 @@ bool renderModel::loadMaterial(const SiString& name,const SiString* textureNames
 	return material->init(name,textureNames,numTextures,
 		pixelShader_filename,pixelShader_funcname,
 		vertexShader_filename,vertexShader_funcname,layout);
+}
+
+void renderModel::load() {
+	vertex.cpu_access = Buffer::NONE;
+	vertex.type = Buffer::BUF_TYPE::VERTEX;
+	vertex.usage = Buffer::USAGE::IMMUTABLE;
+	Resource_loader::LoadModel(fileFormat,filename,vertex,indices);
+	material->load();
 }

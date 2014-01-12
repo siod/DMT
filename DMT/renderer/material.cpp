@@ -8,6 +8,7 @@ extern Common* common;
 bool Material::init( const SiString& name,const SiString* textureNames,const unsigned int numTextures,
 					const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
 					const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout) {
+	/*
 	m_numTextures = numTextures;
 	m_name = name;
 	m_PS = common->m_resources->allocateShader(pixelShader_filename);
@@ -33,12 +34,18 @@ bool Material::init( const SiString& name,const SiString* textureNames,const uns
 	//0 is allowed for unstructured data
 	m_VS->registers[0].stride = 0;
 	Sys_CreateBuffer(&m_VS->registers[0],NULL);
+	*/
 	return true;
 }
-/*
-void Material::create() {
 
-
-
+void Material::load() {
+	m_VS->load();
+	if (!m_VS->loaded) {
+		return;
+	}
+	m_PS->load();
+	if (!m_PS->loaded) {
+		//m_VS->unload();
+		return;
+	}
 }
-*/

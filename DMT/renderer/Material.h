@@ -21,6 +21,7 @@ public:
 	bool init( const SiString& name,const SiString* textureNames,const unsigned int numTextures,
 		const SiString& pixelShader_filename, const SiString& pixelShader_funcname, 
 		const SiString& vertexShader_filename,const SiString& vertexShader_funcname,BUFFER_LAYOUT layout);
+	void load();
 
 //private:
 	guid id;

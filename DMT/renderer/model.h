@@ -19,11 +19,12 @@ public:
 		MODEL_OBJ
 	};
 
-	renderModel():points(),indices(),material(NULL),status(INACTIVE) {}
+	renderModel():vertex(),indices(),material(NULL),status(INACTIVE) {}
 	static MODEL_FILE_TYPE convertToFType(const SiString& type) {
 		return MODEL_OBJ;
 	}
 
+	void load();
 	template<typename T>
 	bool loadMesh(std::vector<T>& verts,std::vector<unsigned int>&indices,BUFFER_LAYOUT format) {
 		return loadMeshRaw(&verts[0],sizeof(T),verts.size(),indices,format);
@@ -37,8 +38,8 @@ public:
 	SiString filename;
 	SiString name;
 	MODEL_FILE_TYPE fileFormat;
-	struct Buffer* points;
-	struct Buffer* indices;
+	struct Buffer vertex;
+	struct Buffer indices;
 	//VertBuff* normals; No vertex based normal maps
 	Material* material;
 	MODEL_STATUS status;

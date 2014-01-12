@@ -17,8 +17,9 @@ typedef std::unordered_map<SiString,guid> guidCache;
 public:
 	Resource_manager():textures(),shaders(),materials(),entities(),models(),guids() {}
 
-	void init();
+	bool init();
 	entity* loadEntity(const char* name);
+	bool loadConfig(const char* filename);
 
 
 	guid lookupGUID(const SiString& name) {
@@ -64,6 +65,10 @@ public:
 		return textures.allocateTexture(id);
 	}
 
+	entity* allocateEntity(const guid id) {
+		return allocate(entities,id);
+	}
+
 	Material* allocateMaterial(const SiString& name) {
 		return allocate(materials,name);
 	}
@@ -80,7 +85,11 @@ public:
 	}
 
 	Texture* allocateTexture(const SiString& name) {
-		return textures.allocateTexture(name);
+		return allocateTexture(lookupGUID(name));
+	}
+
+	entity* allocateEntity(const SiString& name) {
+		return allocate(entities,name);
 	}
 
 	entity* addEntity(const SiString& name,const entity & ent) {
@@ -105,6 +114,15 @@ public:
 	void unloadTexture(const SiString& name) {
 		textures.unloadTexture(name);
 	}
+
+
+	void loadLevel(const guid id) {
+		Level & level = levels[id];
+		for ( size_t i(0),end(level.entites.size()); i != end;++i) {
+			entities[level.entites[i]].load();
+		}
+	}
+
 
 	TextureManager textures;
 	shaderCache shaders;

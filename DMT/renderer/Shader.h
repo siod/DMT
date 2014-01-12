@@ -7,8 +7,9 @@
 
 struct Shader {
 	enum S_Type {
-		S_PIXEL,
-		S_VERTEX
+		PIXEL,
+		VERTEX,
+		INVALID
 	};
 	union
 	{
@@ -23,8 +24,35 @@ struct Shader {
 	SiString m_FileName;
 	S_Type type; 
 	unsigned int flags;
+	unsigned int m_numRegisters;
 	Buffer registers[2];
+	bool loaded;
 
+	void load() {
+		if (loaded)
+			return;
+		if (!Sys_Shader_Create(this,m_layout))
+			return;
+		for (size_t i(0); i != m_numRegisters; ++i) {
+			Sys_CreateBuffer(&registers[i],NULL);
+		}
+		loaded = true;
+	}
+
+	void unload() {
+
+
+	}
+	static S_Type StringToType(const SiString&& type) {
+		switch (type[0]) {
+		case 'p':
+			return S_Type::PIXEL;
+		case 'v':
+			return S_Type::VERTEX;
+		default:
+			return S_Type::INVALID;
+		}
+	}
 };
 
 

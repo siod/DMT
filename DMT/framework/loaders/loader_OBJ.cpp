@@ -182,7 +182,7 @@ struct vnt {
 	vec3 norm;
 	vec2 tc;
 };
-void loader_OBJ::load() {
+void loader_OBJ::load(Buffer& vertexBuffer,Buffer& indices) {
 	std::vector<vec3> verts;
 	std::vector<vec3> norms;
 	std::vector<vec2> texCoords;
@@ -195,15 +195,19 @@ void loader_OBJ::load() {
 		return;
 	}
 
-	std::vector<vnt> finalOutput;
+	std::vector<vnt> vextexData;
 	for (size_t i(0);i <vindices.size();++i) {
 		vnt temp;
 		temp.vertex = verts[vindices[i]];
 		temp.norm = norms[nindices[i]];
 		temp.tc = texCoords[tindices[i]];
-		finalOutput.push_back(temp);
+		vextexData.push_back(temp);
 	}
 	BUFFER_LAYOUT layout(BUFFER_LAYOUT::POS_NORM_TC);
+	vertexBuffer.size = vextexData.size();
+	vertexBuffer.stride = sizeof(vnt);
+	Sys_CreateBuffer(&vertexBuffer,&vextexData[0]);
+	/*
 	if (!m_data.model.loadMesh(finalOutput,vindices,layout) ||
 		!m_data.model.loadMaterial("BASIC",NULL,0,
 				"../resources/color.ps","ColorPixelShader",
@@ -211,5 +215,6 @@ void loader_OBJ::load() {
 		m_status = FAILED;
 		return;
 	}
+	*/
 	m_status = LOADED;
 }

@@ -22,6 +22,17 @@ void loader_CONFIG::loadVec4(vec4 &vec, configdata& vector) {
 		vec.w = vector["w"].GetDouble();
 }
 
+void loader_CONFIG::loadBuffer(Buffer &buff,configdata& config) {
+	buff.cpu_access = Buffer::StringToAccess(config["cpu_access"].GetString());
+	buff.usage = Buffer::StringToUsage(config["usage"].GetString());
+	buff.type = Buffer::StringToType(config["type"].GetString());
+	//Making this constant for now
+	buff.size = sizeof(mat4)*3;
+	buff.stride = config["stride"].GetUint();
+
+
+}
+
 void loader_CONFIG::loadMaterials(configdata& materials) {
 	if (!materials.IsArray()) {
 		return;
@@ -30,8 +41,8 @@ void loader_CONFIG::loadMaterials(configdata& materials) {
 		configdata& config(materials[i]);
 		Material* material = common->m_resources->allocateMaterial(config["guid"].GetUint64());
 		material->m_name = config["name"].GetString();
-		material->m_VS = common->m_resources->allocateShader(config["vertexShaders"].GetUint64());
-		material->m_PS = common->m_resources->allocateShader(config["vertexShaders"].GetUint64());
+		material->m_VS = common->m_resources->allocateShader(config["vertexShader"].GetUint64());
+		material->m_PS = common->m_resources->allocateShader(config["pixelShader"].GetUint64());
 		configdata& textures(config["textures"]);
 		material->m_numTextures = textures.Size();
 		for (rapidjson::SizeType j(0); j != material->m_numTextures; ++j) {
@@ -51,8 +62,15 @@ void loader_CONFIG::loadShaders(configdata& shaders) {
 		shader->name = config["name"].GetString();
 		shader->m_FileName = config["filename"].GetString();
 		shader->m_FuncName = config["functionName"].GetString();
+		shader->type = Shader::StringToType(config["type"].GetString());
+		if (config.HasMember("registers") && config["registers"].IsArray()) {
+			configdata& sRegisters(config["registers"]);
+			shader->m_numRegisters = sRegisters.Size();
+			for (rapidjson::SizeType j(0);j < shader->m_numRegisters;++j) {
+				loadBuffer(shader->registers[j],sRegisters[i]);
+			}
+		}
 	}
-
 }
 void loader_CONFIG::loadTextures(configdata& textures) {
 	if (!textures.IsArray()) {
@@ -60,7 +78,7 @@ void loader_CONFIG::loadTextures(configdata& textures) {
 	}
 	for (rapidjson::SizeType i(0);i < textures.Size();++i) {
 		configdata& config(textures[i]);
-		Texture* texture = common->m_resources->allocateTexture(textures["id"].GetUint64());
+		Texture* texture = common->m_resources->allocateTexture(config["guid"].GetUint64());
 		texture->name = config["name"].GetString();
 		texture->filename = config["filename"].GetString();
 		if (config.HasMember("registername") && config["registername"].GetBool()) {
@@ -93,11 +111,12 @@ void loader_CONFIG::loadEntities(configdata& entities) {
 	}
 	for (rapidjson::SizeType i(0);i < entities.Size();++i) {
 		configdata& config(entities[i]);
-		entity  newEntity = Resource_loader::Load(Resource_loader::getType(entities[i]["format"].GetString()),
-			SiString("../resources/") + entities[i]["file"].GetString());
-		loadVec3(newEntity.pos,entities[i]["pos"]);
-		loadVec4(newEntity.rot,entities[i]["rot"]);
-		newEntity.name = entities[i]["name"].GetString();
+		entity* newEntity = common->m_resources->allocateEntity(config["guid"].GetUint64());
+		loadVec3(newEntity->pos,config["pos"]);
+		loadVec4(newEntity->rot,config["rot"]);
+		newEntity->name = config["name"].GetString();
+		newEntity->hidden = config["hidden"].GetBool();
+		newEntity->model = common->m_resources->allocateModel(config["model"].GetUint64());
 	}
 }
 
@@ -110,9 +129,7 @@ void loader_CONFIG::loadLevels(configdata& levels) {
 		Level* newLevel = common->m_resources->allocateLevel(level["guid"].GetUint64());
 		newLevel->name = level["name"].GetString();
 		newLevel->friendlyName = level["friendlyName"].GetString();
-		newLevel->startPos.x = level["startLoc"]["x"].GetDouble();
-		newLevel->startPos.y = level["startLoc"]["y"].GetDouble();
-		newLevel->startPos.z = level["startLoc"]["z"].GetDouble();
+		loadVec3(newLevel->startPos,level["startLoc"]);
 		configdata& entities(level["entities"]);
 		for (rapidjson::SizeType j(0); j != levels.Size(); ++j) {
 			newLevel->entites.push_back(entities[i].GetUint64());
@@ -128,10 +145,29 @@ void loader_CONFIG::load() {
 	SiString raw(Files::slurp(m_filename));
 	rapidjson::Document config;
 	if (config.Parse<0>(raw.c_str()).HasParseError()) {
+		Log("json parse error\n",Logging::LOG_ERROR);
 		m_status = FAILED;
 		return;
 	}
 	Log("Parsed config file\n",Logging::LOG_INFO);
+	const char* members[] = { "textures",
+							"shaders",
+							"materials",
+							"entities",
+							"levels",
+							"models",
+							"root" };
+
+	for (int i(0);i != 7; ++i) {
+		if (!config.HasMember(members[i])) {
+			Log("malformed config file, ",Logging::LOG_ERROR);
+			Log(members[i],Logging::LOG_ERROR);
+			Log(" is missing\n",Logging::LOG_ERROR);
+			m_status = FAILED;
+			return;
+		}
+	}
+	/*
 	if (!(config.HasMember("textures") &&
 		config.HasMember("shaders") &&
 		config.HasMember("materials") &&
@@ -143,6 +179,7 @@ void loader_CONFIG::load() {
 			m_status = FAILED;
 			return;
 	}
+	*/
 	const rapidjson::Value& root(config["root"]);
 	if (!root.HasMember("startLevel")) {
 		Log("No start level present\n",Logging::LOG_ERROR);
@@ -154,4 +191,8 @@ void loader_CONFIG::load() {
 	loadMaterials(config["materials"]);
 	loadModels(config["models"]);
 	loadEntities(config["entities"]);
+	loadLevels(config["levels"]);
+	Log("Loading finished!\n",Logging::LOG_INFO);
+	m_status = LOADED;
+
 }

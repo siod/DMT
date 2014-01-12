@@ -11,13 +11,14 @@ struct Buffer {
 		RESOURCE,
 		STREAM,
 		RENDER_TARGET,
-		DEPTH_STENCIL
+		DEPTH_STENCIL,
+		INVALID
 	};
 	enum USAGE {
 		DEFAULT,
 		IMMUTABLE,
 		DYNAMIC,
-		STAGING
+		STAGING,
 	};
 	enum CPU_ACCESS {
 		NONE,
@@ -32,6 +33,63 @@ struct Buffer {
 	unsigned int stride;
 	unsigned int format;
 	CPU_ACCESS cpu_access;
+
+	static BUF_TYPE StringToType(const SiString& type) {
+		switch (type[0]) {
+			case 'v':
+				return BUF_TYPE::VERTEX;
+			case 'i':
+				return BUF_TYPE::INDEX;
+			case 'c':
+				return BUF_TYPE::CONSTANT;
+			case 'r':
+				if (type[2] == 's') {
+					return BUF_TYPE::RESOURCE;
+				} else {
+					return BUF_TYPE::RENDER_TARGET;
+				}
+			case 's':
+				return BUF_TYPE::STREAM;
+			case 'd':
+				return BUF_TYPE::DEPTH_STENCIL;
+			default:
+				return BUF_TYPE::INVALID;
+		}
+	}
+
+	static USAGE StringToUsage(const SiString&& type) {
+		switch (type[0]) {
+			case 'd':
+				if (type[1] == 'e') {
+					return USAGE::DEFAULT;
+				} else {
+					return USAGE::DYNAMIC;
+				}
+			case 'i':
+				return USAGE::IMMUTABLE;
+			case 's':
+				return USAGE::STAGING;
+			default:
+				return USAGE::DEFAULT;
+		}
+	}
+
+	static CPU_ACCESS StringToAccess(const SiString&& type) {
+		switch (type[0]) {
+			case 'n':
+				return CPU_ACCESS::NONE;
+			case 'w':
+				return CPU_ACCESS::WRITE;
+			case 'r':
+				return CPU_ACCESS::READ;
+			default:
+				return CPU_ACCESS::NONE;
+		}
+	}
+
+
+
+
 
 };
 #endif

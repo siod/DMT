@@ -18,14 +18,20 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 	Logging::init(Logging::LOG_DEBUG,true,true,"dmt.log");
 	Sys_Init();
 	m_resources = new Resource_manager();
-	m_resources->init();
+	if (!m_resources->init()) {
+		LogLine("Failed to load config file, aborting",Logging::LOG_ERROR);
+		return false;
+	}
 	m_renderer = new Renderer();
 	m_renderer->init();
 	m_input->init();
+
+	/*
 	entity* teapot = m_resources->loadEntity("..\\resources\\teapot.obj");
 	if (teapot) {
 		m_renderer->m_queue.push_back(teapot);
 	}
+	*/
 
 	m_running=true;
 	return true;

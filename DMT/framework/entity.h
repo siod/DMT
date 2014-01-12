@@ -11,11 +11,14 @@ public:
 	};
 
 
-	entity():id(0),model(),state(STATE_ERROR),hidden(true),pos(0.0f,0.0f,0.0f),rot(0.0f,0.0f,0.0f,0.0f),name("") {}
+	entity():id(0),model(NULL),state(STATE_ERROR),hidden(true),pos(0.0f,0.0f,0.0f),rot(0.0f,0.0f,0.0f,0.0f),name("") {}
 
+	void load() {
+		model->load();
+	}
 
 	guid id;
-	renderModel model;
+	renderModel* model;
 	STATE state;
 	bool	hidden;
 	vec3 pos;

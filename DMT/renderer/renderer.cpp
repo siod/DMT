@@ -45,6 +45,9 @@ void Renderer::init() {
 	screen.stencilTexture->usage = 0;
 	screen.stencilTexture->bindFlags = 6;
 	screen.stencilTexture->cpu_writable = false;
+	screen.stencilTexture->sampling.num = 1;
+	screen.stencilTexture->sampling.quality = 0;
+	common->m_resources->textures.loadTexture(screen.stencilTexture->id);
 	//FIX
 	Sys_CreateScreenBuffers(screen);
 	allocateView(screen);
@@ -65,6 +68,7 @@ void Renderer::frame() {
 		Sys_SetandClearView(m_views[i]);
 		for (int j = 0; j < m_queue.size(); ++j)
 		{
+			/*
 			Sys_Shader_Set(m_queue[j]->model.material->m_VS->vs,m_queue[j]->model.material->m_VS->layout,m_queue[j]->model.material->m_PS->ps);
 			mat4 data[3];
 
@@ -74,6 +78,7 @@ void Renderer::frame() {
 						
 			Sys_Shader_SetConstBuffer(m_queue[j]->model.material->m_VS->registers[0].data,(const void**)glm::value_ptr(data[0]),sizeof(mat4)*3,1,0);
 			Sys_Draw(*m_queue[j]->model.points);
+			*/
 			//Sys_Draw_Indexed(*m_queue[j]->model.points,*m_queue[j]->model.indices);
 
 		}
