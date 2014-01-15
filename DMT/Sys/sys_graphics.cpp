@@ -457,7 +457,7 @@ void Sys_Shader_Set(Sys_VS_t &vs,Sys_Layout_t &layout,Sys_PS_t &ps) {
 	win32.pContext->VSSetShader(vs.shader,NULL,0);
 }
 
-void Sys_Draw(Buffer &verts) {
+void Sys_Draw(const Buffer &verts) {
 	win32.pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	unsigned int stride = verts.stride;
 	unsigned int offset = 0;

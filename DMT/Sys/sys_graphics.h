@@ -86,5 +86,5 @@ void Sys_Shader_SetConstBuffer(Sys_Buff_t constBuffer, const void** data,const s
 bool Sys_Shader_Create(Shader *shader,BUFFER_LAYOUT layout);
 void Sys_Shader_Set(Sys_VS_t &vs,Sys_Layout_t &layout,Sys_PS_t &ps);
 void Sys_Draw_Indexed(Buffer &verts,Buffer &indices);
-void Sys_Draw(Buffer &verts);
+void Sys_Draw(const Buffer &verts);
 #endif

@@ -28,5 +28,6 @@ typedef struct {
 // quits the game
 void Sys_Quit();
 void Sys_Init();
+bool Sys_chdir(const char* dir);
 
 #endif

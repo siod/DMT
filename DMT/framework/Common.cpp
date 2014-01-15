@@ -33,6 +33,7 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 	}
 	*/
 
+	m_resources->loadLevel(startLevelID);
 	m_running=true;
 	return true;
 }
@@ -40,6 +41,7 @@ bool Common::init(int argc, const char** argv,const char* cmdLine) {
 void Common::mainLoop() {
 	float ftime(0.0f);
 	m_input->frame();
+	m_renderer->populateQueue(m_resources->entityList);
 	m_renderer->frame();
 }
 

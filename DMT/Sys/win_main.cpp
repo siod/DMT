@@ -48,6 +48,17 @@ void Sys_Init() {
 
 }
 
+bool Sys_chdir(const char* dir) {
+	bool success (SetCurrentDirectoryA(dir));
+	if (!success) {
+		char buffer[MAX_PATH];
+		GetCurrentDirectoryA(MAX_PATH,buffer);
+		std::cout << buffer << "\n";
+		int error (GetLastError());
+		std::cout << error << "\n";
+	}
+	return success;
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 				   PSTR cmdLine, int showCmd)

@@ -53,6 +53,16 @@ void Renderer::init() {
 	allocateView(screen);
 }
 
+void Renderer::populateQueue(std::vector<entity*>& entities) {
+	m_queue.clear();
+	for( size_t i(0),end(entities.size());i != end;++i) {
+		m_queue.push_back(
+			Renderable( entities[i]->pos,
+						entities[i]->rot,
+						*(entities[i]->model))
+						);
+	}
+}
 void Renderer::allocateView(renderView& view) {
 	m_views.push_back(view);
 
@@ -68,20 +78,36 @@ void Renderer::frame() {
 		Sys_SetandClearView(m_views[i]);
 		for (int j = 0; j < m_queue.size(); ++j)
 		{
-			/*
-			Sys_Shader_Set(m_queue[j]->model.material->m_VS->vs,m_queue[j]->model.material->m_VS->layout,m_queue[j]->model.material->m_PS->ps);
+			Sys_Shader_Set(m_queue[j].model.material->m_VS->vs,
+				m_queue[j].model.material->m_VS->layout,
+				m_queue[j].model.material->m_PS->ps);
 			mat4 data[3];
 
 			data[0] = ident;
 			data[1] = (m_views[i].viewMat);
 			data[2] = (m_views[i].projection);
 						
-			Sys_Shader_SetConstBuffer(m_queue[j]->model.material->m_VS->registers[0].data,(const void**)glm::value_ptr(data[0]),sizeof(mat4)*3,1,0);
-			Sys_Draw(*m_queue[j]->model.points);
-			*/
+			Sys_Shader_SetConstBuffer(m_queue[j].model.material->m_VS->registers[0].data,
+				(const void**)glm::value_ptr(data[0]),sizeof(mat4)*3,1,0);
+			Sys_Draw(m_queue[j].model.vertex);
 			//Sys_Draw_Indexed(*m_queue[j]->model.points,*m_queue[j]->model.indices);
 
 		}
 		Sys_SwapAndDisplay();
 	}
+}
+
+
+
+
+BUFFER_LAYOUT StringToBUFFER_LAYOUT(const SiString&& type) {
+	if ( type == "NONE")
+		return BUFFER_LAYOUT::NONE;
+	if ( type == "POS")
+		return BUFFER_LAYOUT::POS;
+	if ( type == "POS_NORM")
+		return BUFFER_LAYOUT::POS_NORM;
+	if ( type == "POS_NORM_TC")
+		return BUFFER_LAYOUT::POS_NORM_TC;
+	return BUFFER_LAYOUT::NONE;
 }

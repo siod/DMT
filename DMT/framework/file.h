@@ -8,7 +8,7 @@ class Files {
 
 public:
 	static SiString slurp(const char* filename) {
-		std::fstream file("../resources/" + SiString(filename),std::ifstream::in);
+		std::fstream file(SiString(filename),std::ifstream::in);
 		std::stringstream sstr;
 		sstr << file.rdbuf();
 		return sstr.str();

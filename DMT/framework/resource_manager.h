@@ -1,4 +1,5 @@
-
+#ifndef __RESOUCE_MANAGER_
+#define __RESOUCE_MANAGER_
 
 #include "..\renderer\TextureManager.h"
 #include "..\renderer\Shader.h"
@@ -15,7 +16,7 @@ typedef std::unordered_map<guid,entity> entityCache;
 typedef std::unordered_map<guid,Level> levelCache;
 typedef std::unordered_map<SiString,guid> guidCache;
 public:
-	Resource_manager():textures(),shaders(),materials(),entities(),models(),guids() {}
+	Resource_manager():textures(),shaders(),materials(),entities(),models(),guids(),loadedLevelID(0) {}
 
 	bool init();
 	entity* loadEntity(const char* name);
@@ -116,10 +117,20 @@ public:
 	}
 
 
+	void unloadLevel(const guid id) {
+		entityList.clear();
+	}
+
 	void loadLevel(const guid id) {
+		if (loadedLevelID != 0) {
+			unloadLevel(loadedLevelID);
+		}
+		loadedLevelID = id;
 		Level & level = levels[id];
 		for ( size_t i(0),end(level.entites.size()); i != end;++i) {
-			entities[level.entites[i]].load();
+			entity& cur(entities[level.entites[i]]);
+			cur.load();
+			entityList.push_back(&cur);
 		}
 	}
 
@@ -131,5 +142,8 @@ public:
 	levelCache levels;
 	modelCache models;
 	guidCache guids;
+	guid loadedLevelID;
+	std::vector<entity*> entityList;
 
 };
+#endif

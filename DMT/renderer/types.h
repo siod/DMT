@@ -8,4 +8,7 @@ enum BUFFER_LAYOUT {
 	POS_NORM_TC
 };
 
+
+BUFFER_LAYOUT StringToBUFFER_LAYOUT(const SiString&& type);
+
 #endif

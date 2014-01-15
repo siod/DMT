@@ -6,6 +6,10 @@
 #include "types.h"
 
 struct Shader {
+	Shader():id(0),name(""),layout(),m_layout(),
+		m_FuncName(""),m_FileName(""),type(INVALID),
+		flags(0),m_numRegisters(0),registers(),loaded(false) {}
+
 	enum S_Type {
 		PIXEL,
 		VERTEX,

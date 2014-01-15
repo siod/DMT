@@ -1,6 +1,11 @@
 #include "resource_manager.h"
 #include "resource_loader.h"
+bool Sys_chdir(const char* dir);
 bool Resource_manager::init() {
+	if (!Sys_chdir("..\\resources")) {
+		Log("unable to change into resouces folder\n",Logging::LOG_ERROR);
+		return false;
+	}
 	return loadConfig("resources.json");
 }
 entity* Resource_manager::loadEntity(const char* name) {

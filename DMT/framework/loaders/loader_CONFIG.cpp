@@ -63,6 +63,7 @@ void loader_CONFIG::loadShaders(configdata& shaders) {
 		shader->m_FileName = config["filename"].GetString();
 		shader->m_FuncName = config["functionName"].GetString();
 		shader->type = Shader::StringToType(config["type"].GetString());
+		shader->m_layout = StringToBUFFER_LAYOUT(config["layout"].GetString());
 		if (config.HasMember("registers") && config["registers"].IsArray()) {
 			configdata& sRegisters(config["registers"]);
 			shader->m_numRegisters = sRegisters.Size();
@@ -167,19 +168,6 @@ void loader_CONFIG::load() {
 			return;
 		}
 	}
-	/*
-	if (!(config.HasMember("textures") &&
-		config.HasMember("shaders") &&
-		config.HasMember("materials") &&
-		config.HasMember("entities") &&
-		config.HasMember("levels") &&
-		config.HasMember("models") &&
-		config.HasMember("root"))) {
-			Log("malformed config file\n",Logging::LOG_ERROR);
-			m_status = FAILED;
-			return;
-	}
-	*/
 	const rapidjson::Value& root(config["root"]);
 	if (!root.HasMember("startLevel")) {
 		Log("No start level present\n",Logging::LOG_ERROR);
@@ -192,6 +180,7 @@ void loader_CONFIG::load() {
 	loadModels(config["models"]);
 	loadEntities(config["entities"]);
 	loadLevels(config["levels"]);
+	common->startLevelID = root["startLevel"].GetUint64();
 	Log("Loading finished!\n",Logging::LOG_INFO);
 	m_status = LOADED;
 

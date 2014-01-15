@@ -21,6 +21,7 @@
 			"type" : "vertex",
 			"filename" : "color.vs",
 			"functionName" : "ColorVertexShader",
+			"layout" : "POS_NORM_TC",
 			"registers" : [
 				{
 					"usage" : "dynamic",
@@ -37,6 +38,7 @@
 			"type" : "pixel",
 			"filename" : "color.ps",
 			"functionName" : "ColorPixelShader",
+			"layout" : "NONE",
 			"registers" : []
 		}
 	 ],
